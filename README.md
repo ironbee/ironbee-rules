@@ -1,4 +1,4 @@
-ironbee-rules
+Ironbee Rules
 =============
 
-IronBee Rules
+An experimental IronBee rule set.
