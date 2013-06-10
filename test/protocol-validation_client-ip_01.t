@@ -1,0 +1,6 @@
+#
+# @OK	RESPONSE_STATUS 200
+# @Failed
+GET / HTTP/1.0
+Client-IP: 127.0.0.1
+
