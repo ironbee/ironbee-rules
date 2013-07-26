@@ -84,7 +84,7 @@ for i, v in ipairs(lines) do
 		end
 
 		if previous then
-			fragments["/" .. previous] = true
+			fragments[previous] = true
 			-- print("Last: " .. previous)
 		end
 
