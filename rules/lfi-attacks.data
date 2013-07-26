@@ -1,0 +1,11 @@
+# ignored comment
+c/ 
+c:/ 
+c:/some stuff
+/some stuff
+/etc/passwd
+c:/boot.ini
+/etc/subversion/config
+/passwd
+/etc/passwd/./././
+.htaccess
