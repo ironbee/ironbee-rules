@@ -1,0 +1,65 @@
+fimap
+-----
+https://code.google.com/p/fimap/
+
+	- Default user agent:
+		fimap.googlecode.com/v1.00_svn (My life for Aiur)
+
+	
+DotDotPwn
+---------
+https://github.com/wireghoul/dotdotpwn
+
+	- Very good support for various traversal attacks.
+
+	- Does not have a large list of files to look for.
+
+	- No default agent.
+
+
+Panoptic
+--------
+http://websec.ca/blog/view/panoptic
+
+	- Default user agent:
+		Panoptic v0.1-0603adc
+	
+	- Has a large database of known files (cases.xml).
+	
+	- Does not contain any known exploits.
+
+
+Uniscan 2.6
+-----------
+http://sourceforge.net/projects/uniscan/
+
+	- Leaks the actual user agent on the first request (e.g., libwww-perl/6.05).
+
+	- Default user agent:
+		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7"
+
+	- The actual U-A header is messed up (does not remove quotes, removes all whitespace):
+		"Mozilla/5.0(X11;Linuxx86_64)AppleWebKit/535.7(KHTML,likeGecko)Chrome/16.0.912.77Safari/535.7"
+
+	- Tries to include PHP code from http://uniscan.sourceforge.net; when executed the code outputs “unipampascanunipampa”.
+
+	- The string “//uniscan\d+uniscan/” is added to the URI for 404 testing
+
+	- The LFI code is in: ./Plugins/Tests/Dynamic/checkLFI.pm
+
+	- Has a large list of known RFI/LFI vulnerabilities; files ./LFI and ./RFI
+
+	- Tries only /etc/passwd and boot.ini
+
+Evasion techniques used:
+    - Backreferences
+	- URL encoding
+	- NUL byte (plus optional extension)
+	- Double encoding (%252e, %252f, etc.)
+	- Overlong UTF-8 encoding (%c0%af)
+	- Consecutive slashes
+	- Truncation attack with /.
+	- TODO Understand these (attacks against filters?):
+	  	../.../.././../.../.././../.../.././../.../.././../.../.././../.../.././etc/passwd
+	  	/\\../\\../\\../\\../\\../\\../\\../\\../\\../\\../\\../etc/passwd
+	  	.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./etc/passwd
