@@ -92,7 +92,15 @@ for i, v in ipairs(lines) do
 	end
 end
 
+table.sort(filenames)
 write_array_to_file(filenames, "lfi-files.data")
-write_table_keys_to_file(fragments, "lfi-fragments.data")
+
+local sorted_fragments = {}
+for i, v in pairs(fragments) do
+	table.insert(sorted_fragments, i)
+end
+
+table.sort(sorted_fragments)
+write_array_to_file(sorted_fragments, "lfi-fragments.data")
 
 print("Found " .. #filenames .. " filename patterns and " .. table_size(fragments) .. " fragments.")
