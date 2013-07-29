@@ -83,6 +83,26 @@ function normalize_path(p)
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
 
+	-- TODO This is dangerous because we remove large parts of input.
+	-- If the path starts with "//?/UNC/Server/Volume/", remove that part. What
+	-- remains should be an absolute path that starts with /.
+	local capture = string.match(path, "^/+%?/+unc/.+/.+(/.*)")
+	if capture then
+	 	path = capture
+	end
+
+	-- If the path starts with "//?/c:", remove that part.
+	local capture = string.match(path, "^/+%?/+%a:(.+)")
+	if capture then
+		path = capture
+	end
+
+	-- If the path starts with "c:", remove that part.
+	local capture = string.match(path, "^%a:(.+)")
+	if capture then
+		path = capture
+	end
+
 	-- Then, perform RFC normalization.
 	-- TODO Perform normalization on a string that does not contain
 	--      a drive letter, or is not a UNC or a UNCW path.

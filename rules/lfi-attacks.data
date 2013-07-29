@@ -6,6 +6,8 @@ c:/some stuff
 /etc/passwd
 c:\boot.ini
 \\?\c:\boot.ini
+\\?\c:./././boot.ini
+\\?\c:./././../../boot.ini
 \\?\UNC\Server\Volume\boot.ini
 c:/boot.ini
 c:/././././boot.ini
