@@ -70,6 +70,13 @@ function decode_path(p)
 	-- doing otherwise would open us up for evasion.
 	path = url_decode(path)
 
+	-- TODO Handle %u encoding.
+	-- TODO Handle overlong UTF-8.
+	-- TODO Handle the half-width/full-width range.
+	-- TODO Use best-fit matching as a vulnerable system might.
+	-- TODO Implement other decoding steps vulnerable applications might do. For
+	--      example, decode HTML entities.
+
 	-- Strictly speaking, we don't have to trim here because PHP does not ignore
 	-- whitespace at the beginning of file names. However, we do because many
 	-- applications could be doing the trimming themselves and I suspect the chances
@@ -224,6 +231,11 @@ function is_lfi_attack(a)
 			end
 		end
 	end
+
+	-- TODO Look at the string before normalization. Does it look like an LFI attack? For
+	--      example, look for the NUL bytes and the truncation attack. Are there too many
+	--      self-references? Are self-references mixed with backreferences, etc? Some other
+	--      attacks might have an easy to detect (e.g., Windows filename globbing). 
 
 	return p
 end
