@@ -63,6 +63,9 @@ https://github.com/wireghoul/dotdotpwn
                 "%bg%qf", "%uEFC8", "%uF025",
                 "%%32%%66", "%%35%%63"
 
+      - There are many other patterns that are probably quite specific to this
+        tool. Matching on those would make it less effective.
+
 
 Panoptic
 --------

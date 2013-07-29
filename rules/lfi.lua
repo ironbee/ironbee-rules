@@ -124,7 +124,7 @@ function is_lfi_attack(a)
 	local patterns = file_lines("lfi-fragments.data")
 	for i, v in ipairs(patterns) do
 		-- TODO Escape meta characters.
-		
+
 		-- Look for the fragment anywhere in the input string.
 		if (string.find(a, v)) then
 			p = 0.8
@@ -133,11 +133,17 @@ function is_lfi_attack(a)
 
 	-- Look for well-known files; this should be a pretty strong indication of attack.
 
+	-- ATTACK POINT We need to maintain a good database of well-known files.
+
 	local filenames = file_lines("lfi-files.data")
 
 	for i, v in ipairs(filenames) do
-		-- In order to minimize false positives, we match full paths from
+		-- In order to minimize false positives, we match these full paths from
 		-- the beginning of the string only.
+
+		-- ATTACK POINT We rely on our normalization routines to ensure the
+		--              beginning of the string does not contain something that
+		--              will be ignored when used (e.g., ././././ self-references).
 
 		-- TODO Escape meta characters.
 		local pattern = "^" .. v
@@ -146,7 +152,9 @@ function is_lfi_attack(a)
 			p = 1
 		else
 			-- Try again, first prepending a forward slash to the input string. We want to
-			-- be extra vigilent and match patterns such as "etc/passwd".
+			-- be extra vigilent and match patterns such as "etc/passwd" (our list will
+			-- contain it as /etc/passwd).
+			-- TODO Change the implementation to avoid having to match twice.
 			if (string.find("/" .. a, pattern)) then
 				p = 1
 			end
