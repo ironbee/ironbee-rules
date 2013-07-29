@@ -67,6 +67,9 @@ end
 function normalize_path(p)
 	local path = p
 
+	-- ATTACK POINT For this type of attack, we assume the attacker is able to
+	--              change IFS to something else.
+
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
 
