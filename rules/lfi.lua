@@ -95,6 +95,8 @@ end
 function is_lfi_attack(a)
 	print("\nInput: " .. a)
 
+	-- TODO Handle PHP wrappers. Such input might not be LFI, though.
+
 	-- First, convert the input string into something with we can work with.
 	a = decode_path(a)
 	a = normalize_path(a)
@@ -107,7 +109,13 @@ function is_lfi_attack(a)
 	
 	--[[
 
+	-- Entry point: absolute path and relative path. In PHP, relative paths
+	-- are evaluated in the context of include_path configuration.
+
 	-- TODO There is some value in detecting strings that might be paths.
+
+	Portable Filename Character Set: [-a-zA-Z0-9_.]
+	http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap03.html#tag_03_276
 
 	-- The beginning looks like an absolute Unix of Windows path?
 	if (pcre.match(a, "^([a-z]:)?/")) then
