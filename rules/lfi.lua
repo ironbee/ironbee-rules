@@ -138,6 +138,9 @@ function is_lfi_attack(a)
 
 	-- ATTACK POINT We need to maintain a good database of well-known files.
 
+	-- TODO Could path segment parameters be used for evasion? For
+	--      example /etc/passwd written as /etc;p=1/passwd.
+
 	local filenames = file_lines("lfi-files.data")
 
 	for i, v in ipairs(filenames) do
