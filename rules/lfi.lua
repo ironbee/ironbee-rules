@@ -97,9 +97,9 @@ function normalize_path(p)
 
 	-- Useful information about Windows paths: http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
 
-	-- TODO This is dangerous because we remove large parts of input.
 	-- If the path starts with "//?/UNC/Server/Share/", remove that part. What
 	-- remains should be an absolute path that starts with /.
+	-- TODO This is dangerous because we remove large parts of input.
 	local capture = string.match(path, "^/+%?/+unc/.+/.+(/.*)")
 	if capture then
 	 	path = capture
