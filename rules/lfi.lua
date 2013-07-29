@@ -85,7 +85,7 @@ function normalize_path(p)
 
 	-- Then, perform RFC normalization.
 	-- TODO Perform normalization on a string that does not contain
-	--      a drive letter, or is not a UNC path.
+	--      a drive letter, or is not a UNC or a UNCW path.
 	path = remove_dot_segments(path)
 
 	-- Finally, compress consecutive forward slashes.
