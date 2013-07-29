@@ -65,7 +65,7 @@ function decode_path(p)
 
 	path = string.lower(path)
 
-	-- Strictly speaking, we don't have to trim here because PHP does _not_ ignore
+	-- Strictly speaking, we don't have to trim here because PHP does not ignore
 	-- whitespace at the beginning of file names. However, we do because many
 	-- applications could be doing the trimming themselves and I suspect the chances
 	-- that we'd be introducing false positives are small.
@@ -77,7 +77,7 @@ end
 function normalize_path(p)
 	local path = p
 
-	-- ATTACK POINT For this type of attack, we assume the attacker is able to
+	-- ATTACK POINT For this type of attack, we assume the attacker is not able to
 	--              change IFS to something else.
 
 	-- First, convert all backslashes to forward slashes.
