@@ -194,7 +194,9 @@ function is_lfi_attack(a)
 		if (string.find(a, v)) then
 			p = 0.8
 		end
-	end		
+	end
+
+	-- TODO Detect attempt to include PHP session files.
 
 	-- Look for well-known files; this should be a pretty strong indication of attack.
 
@@ -239,7 +241,9 @@ function is_lfi_attack(a)
 	-- TODO Look at the string before normalization. Does it look like an LFI attack? For
 	--      example, look for the NUL bytes and the truncation attack. Are there too many
 	--      self-references? Are self-references mixed with backreferences, etc? Some other
-	--      attacks might have an easy to detect (e.g., Windows filename globbing). 
+	--      attacks might have an easy to detect (e.g., Windows filename globbing).
+	--      Too many backreferences at the beginning might indicate an attempt to reach
+	--      the MAX_PATH limit.
 
 	return p
 end
