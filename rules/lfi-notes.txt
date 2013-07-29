@@ -5,6 +5,23 @@ https://code.google.com/p/fimap/
 	- Default user agent:
 		fimap.googlecode.com/v1.00_svn (My life for Aiur)
 
+	- Notable patterns:
+		/etc/passwd, /proc/self/environ, php://input, c:\boot.ini, c:\windows\win.ini
+		/var/log/apache2/access.log, /var/log/apache/access.log, /var/log/httpd/access.log,
+		/var/log/apache2/access_log, /var/log/apache/access_log, /var/log/httpd/access_log,
+		/var/log/auth.log, /var/log/secure,
+		C:\Program Files\Apache Group\Apache\logs\access.log,
+		C:\Program Files\Apache Group\Apache\logs\access_log,
+		/opt/xampp/logs/access.log,
+		/opt/lampp/logs/access_log,
+		...
+
+	- Patterns stored as XML in ./config/generic.xml
+
+	- Has support for manually-configured path truncation attack.
+
+	- Uses backreferences and NUL bytes to look for files, but otherwise not very thorough.
+
 	
 DotDotPwn
 ---------
@@ -12,9 +29,39 @@ https://github.com/wireghoul/dotdotpwn
 
 	- Very good support for various traversal attacks.
 
-	- Does not have a large list of files to look for.
-
 	- No default agent.
+
+	- Files: boot.ini, \windows\system32\drivers\etc\hosts, autoexec.bat, /etc/passwd, /etc/issue,
+		/etc/motd, /etc/issue.netm config.inc.php, web.config, /etc/mysql/my.cnf, /etc/httpd/conf/httpd.conf
+		/etc/httpd/httpd.conf, \inetpub\wwwroot\web.config
+
+	- Evasion techniques:
+
+	  - Both slashes: /, \
+
+	  - URL encoding: %2f, %5c
+	  
+	  - Double URL encoding: %252f, %255c
+	  
+	  - Hex encoding: 0x2f, 0x5c
+	  
+	  - Overlong UTF-8:
+	  	/ -> %c0%af, %e0%80%af, %f0%80%80%af, %f8%80%80%80%af (5 bytes?)
+	  	\ -> %c1%9c; missing: %e0%81%9c, %f0%80%81%9c
+
+	  - Double URL encoding of overlong UTF-u:
+	  	/ -> %25c0%25af
+	  	\ -> %25c1%259c
+
+	  - %u-encoded
+	  	- Unicode Character 'DIVISION SLASH' (U+2215): %u2215
+	  	- Unicode Character 'SET MINUS' (U+2216): %u2216
+
+	  - Other:
+                "%c0%2f", "%c0%5c", "%c1%pc",
+                "%c0%9v", "%c0%qf", "%c1%8s", "%c1%1c", "%c1%af",
+                "%bg%qf", "%uEFC8", "%uF025",
+                "%%32%%66", "%%35%%63"
 
 
 Panoptic
@@ -27,6 +74,8 @@ http://websec.ca/blog/view/panoptic
 	- Has a large database of known files (cases.xml).
 	
 	- Does not contain any known exploits.
+
+	- Has no automation; expects the user to tweak the prefix, suffix, etc.
 
 
 Uniscan 2.6
