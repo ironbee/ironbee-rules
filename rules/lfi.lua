@@ -56,10 +56,20 @@ function remove_dot_segments(s)
     return path
 end
 
+function trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 function decode_path(p)
 	local path = p
 
 	path = string.lower(path)
+
+	-- Strictly speaking, we don't have to trim here because PHP does _not_ ignore
+	-- whitespace at the beginning of file names. However, we do because many
+	-- applications could be doing the trimming themselves and I suspect the chances
+	-- that we'd be introducing false positives are small.
+	path = trim(path)
 
 	return path
 end
