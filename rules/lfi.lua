@@ -139,7 +139,9 @@ function is_lfi_attack(a)
 	-- ATTACK POINT We need to maintain a good database of well-known files.
 
 	-- TODO Could path segment parameters be used for evasion? For
-	--      example /etc/passwd written as /etc;p=1/passwd.
+	--      example /etc/passwd written as /etc;p=1/passwd. Not on Mac OSX
+	--      10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
+	--      platform or filesystem supported it.
 
 	local filenames = file_lines("lfi-files.data")
 
