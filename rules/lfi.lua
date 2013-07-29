@@ -119,13 +119,7 @@ function normalize_path(p)
 		path = capture
 	end
 
-	-- TODO What can we do about paths such as \\Server\Share\Path? Our
-	--      matching of well-known files might not work correctly unless
-	--      we remove the Server and Share.
-
-	-- Then, perform RFC normalization.
-	-- TODO Perform normalization on a string that does not contain
-	--      a drive letter, or is not a UNC or a UNCW path.
+	-- Then, perform RFC normalization to remove the ./ and ../ fragments.
 	path = remove_dot_segments(path)
 
 	-- Finally, compress consecutive forward slashes.
