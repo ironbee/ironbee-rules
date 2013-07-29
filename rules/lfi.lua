@@ -111,7 +111,9 @@ function normalize_path(p)
 		path = capture
 	end
 
-	-- If the path starts with "c:", remove that part.
+	-- If the path starts with "c:", remove that part. On Unix, a filename that begins
+	-- with "c:" is valid, but removing the first two characters won't actually
+	-- impact our detection.
 	local capture = string.match(path, "^%a:(.+)")
 	if capture then
 		path = capture
