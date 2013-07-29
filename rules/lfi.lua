@@ -154,12 +154,13 @@ function is_lfi_attack(a)
 
 	-- Look for well-known files; this should be a pretty strong indication of attack.
 
-	-- ATTACK POINT We need to maintain a good database of well-known files.
+	-- ATTACK POINT Our ability to detect attack (using this approach) depends
+	--              on maintaining a good database of well-known files.
 
-	-- TODO Could path segment parameters be used for evasion? For
-	--      example /etc/passwd written as /etc;p=1/passwd. Not on Mac OSX
-	--      10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
-	--      platform or filesystem supported it.
+	-- ATTACK POINT Could path segment parameters be used for evasion? For
+	--              example /etc/passwd written as /etc;p=1/passwd. Not on Mac OSX
+	--              10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
+	--              platform or filesystem supported it.
 
 	local filenames = file_lines("lfi-files.data")
 
@@ -170,6 +171,10 @@ function is_lfi_attack(a)
 		-- ATTACK POINT We rely on our normalization routines to ensure the
 		--              beginning of the string does not contain something that
 		--              will be ignored when used (e.g., ././././ self-references).
+
+		-- ATTACK POINT If PHP's include_path configuration setting is pointing to
+		--              a special place (e.g., /etc/), then the attacker might be
+		--              able to bypass our well-known filename detection.
 
 		-- TODO Escape meta characters.
 		local pattern = "^" .. v
