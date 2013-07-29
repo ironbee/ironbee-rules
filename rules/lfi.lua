@@ -84,6 +84,8 @@ function normalize_path(p)
 	path = string.gsub(path, "\\", "/")
 
 	-- Then, perform RFC normalization.
+	-- TODO Perform normalization on a string that does not contain
+	--      a drive letter, or is not a UNC path.
 	path = remove_dot_segments(path)
 
 	-- Finally, compress consecutive forward slashes.

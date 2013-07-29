@@ -6,6 +6,8 @@ c:/some stuff
 /some stuff
 /etc/passwd
 c:/boot.ini
+c:/././././boot.ini
+c:/../../../boot.ini
 /etc/subversion/config
 /passwd
 .htaccess
