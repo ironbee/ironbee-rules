@@ -83,6 +83,8 @@ function normalize_path(p)
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
 
+	-- Useful information about Windows paths: http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
+
 	-- TODO This is dangerous because we remove large parts of input.
 	-- If the path starts with "//?/UNC/Server/Share/", remove that part. What
 	-- remains should be an absolute path that starts with /.
