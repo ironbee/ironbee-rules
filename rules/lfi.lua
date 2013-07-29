@@ -24,6 +24,14 @@ function max(a, b)
 	end
 end
 
+function url_decode(s)
+	s = string.gsub(s, "+", " ")
+    s = string.gsub(s, "%%(%x%x)", function (h)
+        	return string.char(tonumber(h, 16))
+       	end)
+    return s
+end
+
 -- Path normalization as specified in RFC 3986, section 5.2.4:
 --     http://tools.ietf.org/html/rfc3986#section-5.2.4
 function remove_dot_segments(s)
@@ -64,6 +72,11 @@ function decode_path(p)
 	local path = p
 
 	path = string.lower(path)
+
+	-- Perform another URL-decoding pass. This is to deal with applications that
+	-- perform URL decoding twice. We convert only valid character pairs, because
+	-- doing otherwise would open us up for evasion.
+	path = url_decode(path)
 
 	-- Strictly speaking, we don't have to trim here because PHP does not ignore
 	-- whitespace at the beginning of file names. However, we do because many
