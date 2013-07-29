@@ -16,14 +16,6 @@ function file_lines(f)
 	return a
 end
 
-function max(a, b)
-	if (a > b) then
-		return a
-	else
-		return b
-	end
-end
-
 function url_decode(s)
 	s = string.gsub(s, "+", " ")
     s = string.gsub(s, "%%(%x%x)", function (h)
