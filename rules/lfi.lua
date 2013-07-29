@@ -84,7 +84,7 @@ function normalize_path(p)
 	path = string.gsub(path, "\\", "/")
 
 	-- TODO This is dangerous because we remove large parts of input.
-	-- If the path starts with "//?/UNC/Server/Volume/", remove that part. What
+	-- If the path starts with "//?/UNC/Server/Share/", remove that part. What
 	-- remains should be an absolute path that starts with /.
 	local capture = string.match(path, "^/+%?/+unc/.+/.+(/.*)")
 	if capture then
@@ -102,6 +102,10 @@ function normalize_path(p)
 	if capture then
 		path = capture
 	end
+
+	-- TODO What can we do about paths such as \\Server\Share\Path? Our
+	--      matching of well-known files might not work correctly unless
+	--      we remove the Server and Share.
 
 	-- Then, perform RFC normalization.
 	-- TODO Perform normalization on a string that does not contain
