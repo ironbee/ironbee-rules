@@ -1,4 +1,5 @@
 # ignored comment
+This is not an attack.
 c/ 
 c:/ 
 c:/some stuff
@@ -7,5 +8,14 @@ c:/some stuff
 c:/boot.ini
 /etc/subversion/config
 /passwd
-/etc/passwd/./././
 .htaccess
+/etc/passwd
+/etc/./passwd
+/etc//passwd
+/etc///passwd
+\etc\passwd
+././././etc/passwd
+/././etc/passwd
+../../etc/passwd
+/../../etc/passwd
+/etc/passwd/./././

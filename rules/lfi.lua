@@ -24,16 +24,81 @@ function max(a, b)
 	end
 end
 
+-- Path normalization as specified in RFC 3986, section 5.2.4:
+--     http://tools.ietf.org/html/rfc3986#section-5.2.4
+function remove_dot_segments(s)
+	-- This function was copied over from Lua-URI, which is licensed under MIT/X:
+	--     http://luaforge.net/projects/uri/
+
+    local path = ""
+
+    while s ~= "" do
+        if s:find("^%.%.?/") then -- A
+            s = s:gsub("^%.%.?/", "", 1)
+        elseif s:find("^/%./") or s == "/." then -- B
+            s = s:gsub("^/%./?", "/", 1)
+        elseif s:find("^/%.%./") or s == "/.." then -- C
+            s = s:gsub("^/%.%./?", "/", 1)
+            if path:find("/") then
+                path = path:gsub("/[^/]*$", "", 1)
+            else
+                path = ""
+            end
+        elseif s == "." or s == ".." then -- D
+            s = ""
+        else -- E
+            local _, p, seg = s:find("^(/?[^/]*)")
+            s = s:sub(p + 1)
+            path = path .. seg
+        end
+    end
+
+    return path
+end
+
+function decode_path(p)
+	local path = p
+
+	path = string.lower(path)
+
+	return path
+end
+
+function normalize_path(p)
+	local path = p
+
+	-- First, convert all backslashes to forward slashes.
+	path = string.gsub(path, "\\", "/")
+
+	-- Then, perform RFC normalization.
+	path = remove_dot_segments(path)
+
+	-- Finally, compress consecutive forward slashes.
+	path = string.gsub(path, "/+", "/")
+
+	return path
+end
+
 function is_lfi_attack(a)
-	a = string.lower(a)
+	print("\nInput: " .. a)
+
+	-- First, convert the input string into something with we can work with.
+	a = decode_path(a)
+	a = normalize_path(a)
 	
+	print("Normalized: " .. a)
+
 	-- Looking at the string alone, how certain are we that it's a path?
 
 	local p = 0
 	
+	--[[
+
+	-- TODO There is some value in detecting strings that might be paths.
+
 	-- The beginning looks like an absolute Unix of Windows path?
 	if (pcre.match(a, "^([a-z]:)?/")) then
-		p = 0.5
+		p = 0.section-5
 	end
 
 	-- TODO If the normalized version begins with ./ or ../, it's clearly a path.
@@ -43,31 +108,46 @@ function is_lfi_attack(a)
 		p = 0.5
 	end
 
-	-- If we believe the value is a path, then also look for common
-	-- patterns. This is our attempt to minimize false positives, although
-	-- it may be dangerous if someone can convince us that something does
-	-- not look a path, even if it is.
-	if (p > 0) then
-		-- Look for well-known path fragments; this is a weaker indication of
-		-- attack, but may catch those attacks that avoid referencing well-known files.
+	-- Do not proceed if input does not look like a path. This is our attempt to
+	-- minimize false positives, although it may be dangerous if someone can convince
+	-- us that something does not look a path, even if it is.
+	if (p == 0) then
+		return 0
+	end
+	]]--
+
+	-- Look for well-known path fragments; this is a weaker indication of attack,
+	-- but may catch those attacks that avoid referencing well-known files.
 		
-		local patterns = file_lines("lfi-fragments.data")
-		for i, v in ipairs(patterns) do
-			-- Look for the fragment anywhere in the input string.
-			if (string.find(a, v)) then
-				p = 0.8
-			end
-		end		
+	-- TODO Correlate with: does input look like a path?
 
-		-- Look for well-known files; this should be a pretty strong indication of attack.
+	local patterns = file_lines("lfi-fragments.data")
+	for i, v in ipairs(patterns) do
+		-- TODO Escape meta characters.
+		
+		-- Look for the fragment anywhere in the input string.
+		if (string.find(a, v)) then
+			p = 0.8
+		end
+	end		
 
-		local patterns = file_lines("lfi-files.data")
+	-- Look for well-known files; this should be a pretty strong indication of attack.
 
-		for i, v in ipairs(patterns) do
-			-- TODO Look at the beginning of input only, but ignoring /../ and ../ fragments. We're
-			--      assuming we can counter evasion. Of course, the mere presence of backreferences
-			--      and similar evasion methods is highly suspicious.
-			if (string.find(a, v)) then
+	local filenames = file_lines("lfi-files.data")
+
+	for i, v in ipairs(filenames) do
+		-- In order to minimize false positives, we match full paths from
+		-- the beginning of the string only.
+
+		-- TODO Escape meta characters.
+		local pattern = "^" .. v
+
+		if (string.find(a, pattern)) then
+			p = 1
+		else
+			-- Try again, first prepending a forward slash to the input string. We want to
+			-- be extra vigilent and match patterns such as "etc/passwd".
+			if (string.find("/" .. a, pattern)) then
 				p = 1
 			end
 		end
