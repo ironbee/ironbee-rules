@@ -220,8 +220,9 @@ function is_lfi_attack(a)
 	--              10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
 	--              platform or filesystem supported it.
 
-	-- ATTACK POINT On Windows platforms, it might be possible to use short names to
-	--              bypass our detection: http://code.google.com/p/iis-shortname-scanner-poc/
+	-- ATTACK POINT On Windows systems it might be possible to use short names and
+	--              other Windows-specific techniques (e.g., Alternative Data Streams) to
+	--              bypass detection: http://code.google.com/p/iis-shortname-scanner-poc/
 	--              TODO
 
 	local filenames = file_lines("lfi-files.data")
@@ -267,7 +268,9 @@ function is_lfi_attack(a)
 	--      	http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
 	--      	https://bugs.php.net/bug.php?id=39863
 
-	-- TODO PHP path truncation attacks.
+	-- TODO PHP path truncation attacks:
+	--			http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
+	--			http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
 
 	-- TODO PHP MAX_PATH truncation attack.
 	--      	Another alternative for NULL byte
