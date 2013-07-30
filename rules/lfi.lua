@@ -24,6 +24,10 @@ function url_decode(s)
     return s
 end
 
+function escape_lua_metachars(s)
+	return(s:gsub("[-().%%+*?[%]^$]", function (chr) return "%" .. chr end))
+end
+
 -- Path normalization as specified in RFC 3986, section 5.2.4:
 --     http://tools.ietf.org/html/rfc3986#section-5.2.4
 function remove_dot_segments(s)
@@ -89,8 +93,7 @@ end
 function normalize_path(p)
 	local path = p
 
-	-- ATTACK POINT For this type of attack, we assume the attacker is not able to
-	--              change IFS to something else.
+	-- ATTACK POINT For this type of attack, we assume the attacker is not able to change.
 
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
@@ -112,8 +115,7 @@ function normalize_path(p)
 	end
 
 	-- If the path starts with "c:", remove that part. On Unix, a filename that begins
-	-- with "c:" is valid, but removing the first two characters won't actually
-	-- impact our detection.
+	-- with "c:" is valid, but removing the first two characters shouldn't impact our detection.
 	local capture = string.match(path, "^%a:(.+)")
 	if capture then
 		path = capture
@@ -188,10 +190,10 @@ function is_lfi_attack(a)
 
 	local patterns = file_lines("lfi-fragments.data")
 	for i, v in ipairs(patterns) do
-		-- TODO Escape meta characters.
+		local pattern = escape_lua_metachars(v)
 
 		-- Look for the fragment anywhere in the input string.
-		if (string.find(a, v)) then
+		if (string.find(a, pattern)) then
 			p = 0.8
 		end
 	end
@@ -222,8 +224,7 @@ function is_lfi_attack(a)
 		--              a special place (e.g., /etc/), then the attacker might be
 		--              able to bypass our well-known filename detection.
 
-		-- TODO Escape meta characters.
-		local pattern = "^" .. v
+		local pattern = "^" .. escape_lua_metachars(v)
 
 		if (string.find(a, pattern)) then
 			p = 1
