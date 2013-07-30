@@ -16,6 +16,8 @@ c:/../../../boot.ini
 /passwd
 .htaccess
 /etc/passwd
+/etc/passwd%00
+/etc/passwd%00index.html
 /etc%2fpasswd
  /etc/passwd
 /etc/./passwd

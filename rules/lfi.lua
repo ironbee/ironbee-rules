@@ -264,9 +264,15 @@ function is_lfi_attack(a)
 	-- them because 1) unpatched systems remain, 2) tools continue to have them, and 3) the
 	-- attackers will try anything.
 
-	-- TODO NUL byte attack against PHP (CVE-2006-7243). Fixed in PHP 5.3.4.
-	--      	http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
-	--      	https://bugs.php.net/bug.php?id=39863
+	-- NUL byte attack against PHP (CVE-2006-7243). Fixed in PHP 5.3.4.
+	--     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
+	--     https://bugs.php.net/bug.php?id=39863
+
+	-- Increase our confidence if we see a NUL byte. In general, NUL bytes should probably
+	-- not be allowed, but we'll leave other rules to take care of that.
+	if (string.find(a, string.char(0))) then
+		p = p + 0.4
+	end
 
 	-- TODO PHP path truncation attacks:
 	--			http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
