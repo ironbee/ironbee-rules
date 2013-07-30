@@ -98,6 +98,9 @@ function normalize_path(p)
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
 
+	-- ATTACK POINT Normalization will fail if the target system allows for other
+	--              characters as path segment separators. For example: http://seclists.org/bugtraq/2000/Oct/264
+
 	-- Useful information about Windows paths: http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
 
 	-- If the path starts with "//?/UNC/Server/Share/", remove that part. What
@@ -142,6 +145,8 @@ function is_lfi_attack(a)
 	-- Looking at the string alone, how certain are we that it's a path?
 
 	-- Do not allow PHP wrappers.
+	-- http://php.net/manual/en/wrappers.data.php
+	-- TODO Add attack examples/documentation.
 
 	if string.match(a, "^php:") then
 		return 1
@@ -198,9 +203,14 @@ function is_lfi_attack(a)
 		end
 	end
 
-	-- TODO Detect attempt to include PHP session files.
+	-- TODO Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID).
+	-- TODO Detect attempts to look for files in /tmp.
 
 	-- Look for well-known files; this should be a pretty strong indication of attack.
+	-- Our list includes files that might contain information useful to the attacker,
+	-- as well as files that the attacker might write to indirectly (e.g., web server
+	-- logs, uploaded files, PHP session storage, environment, etc). The latter are
+	-- typically used to escalate LFI to RCE.
 
 	-- ATTACK POINT Our ability to detect attack (using this approach) depends
 	--              on maintaining a good database of well-known files.
@@ -209,6 +219,10 @@ function is_lfi_attack(a)
 	--              example /etc/passwd written as /etc;p=1/passwd. Not on Mac OSX
 	--              10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
 	--              platform or filesystem supported it.
+
+	-- ATTACK POINT On Windows platforms, it might be possible to use short names to
+	--              bypass our detection: http://code.google.com/p/iis-shortname-scanner-poc/
+	--              TODO
 
 	local filenames = file_lines("lfi-files.data")
 
@@ -239,12 +253,28 @@ function is_lfi_attack(a)
 		end
 	end
 
-	-- TODO Look at the string before normalization. Does it look like an LFI attack? For
-	--      example, look for the NUL bytes and the truncation attack. Are there too many
-	--      self-references? Are self-references mixed with backreferences, etc? Some other
-	--      attacks might have an easy to detect (e.g., Windows filename globbing).
-	--      Too many backreferences at the beginning might indicate an attempt to reach
-	--      the MAX_PATH limit.
+	-- TODO Look at the string before normalization. Does it look like an LFI attack?
+
+	-- TODO Self-references in the path.
+
+	-- TODO Backreferences in the path.
+
+	-- Many of the following techniques are obsolete, but we can expect to continue to see
+	-- them because 1) unpatched systems remain, 2) tools continue to have them, and 3) the
+	-- attackers will try anything.
+
+	-- TODO NUL byte attack against PHP (CVE-2006-7243). Fixed in PHP 5.3.4.
+	--      	http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
+	--      	https://bugs.php.net/bug.php?id=39863
+
+	-- TODO PHP path truncation attacks.
+
+	-- TODO PHP MAX_PATH truncation attack.
+	--      	Another alternative for NULL byte
+	--      	http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
+
+	-- TODO PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
+	--			http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
 
 	return p
 end

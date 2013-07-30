@@ -111,7 +111,7 @@ Evasion techniques used:
 	- Overlong UTF-8 encoding (%c0%af)
 	- Consecutive slashes
 	- Truncation attack with /.
-	- TODO Understand these (attacks against filters?):
+	- TODO Understand these (attacks against filters, Windows?):
 	  	../.../.././../.../.././../.../.././../.../.././../.../.././../.../.././etc/passwd
 	  	/\\../\\../\\../\\../\\../\\../\\../\\../\\../\\../\\../etc/passwd
 	  	.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./.\\\\./etc/passwd
