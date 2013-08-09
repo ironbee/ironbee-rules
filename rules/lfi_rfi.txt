@@ -1,0 +1,152 @@
+
+Attack
+------
+
+- Discovery
+
+  - Submit incorrect parameter value
+
+  - Immediate confirmation if errors are seen in the response
+
+  - Otherwise, requires sucessful exploitation, usually disclosure of a well-known file
+
+  - Automated RFI tools ofen attempt to execute code that outputs a known string
+  
+  - Automated RFI tools often look for known vulnerable applications/scripts before attempting exploitation
+
+- Vulnerable platforms
+
+  - RFI is unique to PHP (?)
+  
+  - ASP Classic
+  
+  - ColdFusion
+
+- Backends
+
+  - Unix paths
+  
+  - Windows paths (incl. UNC paths)
+
+- Outcomes
+
+  - Information disclosure
+
+    - System file access
+  
+    - Source code disclosure
+
+    - Application file access (e.g., configuration files, which might contain passwords)
+
+  - Code execution
+  
+    - Immediate execution using a RFI vulnerability
+
+    - Escalation from LFI using code injection
+
+- Techniques
+
+  - Backreferences, to deal with a path prefix.
+
+  - Path termination, to deal with a path suffix.
+
+    - NUL byte injection
+
+    - Path truncation
+
+      - MAX_PATH
+
+      - ....
+
+      - /./././.
+
+    - Question mark [RFI only]
+
+    - URL fragments [RFI only]
+
+    - URL truncation [RFI only]
+
+  - Use of PHP filters to prevent code execution, resulting in source code disclosure
+  
+  - Code injection
+  
+  	- Via /proc and environment variables (older platforms)
+
+  	- Web server logs
+
+  	- PHP session files
+
+  	- User file uploads (e.g., upload PHP code)
+	
+  	- Code hiding techniques
+	  
+    	- Image that contains PHP code
+
+	- PHP-specific execution of code supplied in request body
+    
+	- Temporary files
+  
+- Evasion
+
+  - Self-references (/.)
+
+  - Use of alternative path segment separators (esp. on Windows)
+
+  - Other generic character replacement techniques (e.g., overlong UTF-8, etc)
+  	
+	
+Defence
+-------
+
+- Hinder detection / Frustrate attacker / Detect exploitation
+
+  - Detect known RFI/LFI tools
+  
+    - Maintain a list of IP addresses seen executing mass-RFI attacks
+  
+  - Prevent leakage of error messages
+  
+  - Prevent leakage of known files (incl. /proc/env/environ)
+  
+  - Prevent output of common operating system commands
+  
+  - Prevent phpinfo() output
+  
+  - Prevent output of common web shells 
+  
+  - Other generic tool and automation defences (e.g., rate limiting, session anomaly tracking, etc)
+  
+  - Detect long running requests (which might happen if the server joins a botnet)
+  
+  - Detect requests producing abnormally long responses (which might happen when web server log injection is taking place)
+  
+- Exploits in well-known applications
+
+  - Write individual virtual patches
+  
+  - Keep track of paths and parameter names to use to increase detection confidence (not as good as virtual patching, but requires much less time)
+
+- Detect attacks
+
+  - If possible, refuse full URLs as input (difficult to do by default, because of potential FPs)
+  
+  - If possible, refuse paths as input (difficult to do by default, because of potential FPs)
+  
+  - Detect paths that use RFI/LFI techniques (for both attack and evasion)
+  
+  - Detect paths that wich to retrieve known files
+  
+  - Detect PHP streams/wrappers
+  
+  - Detect uploaded images that contain PHP code
+  
+  - Detect files that contain PHP code
+  
+  - Detect PHP code anywhere in request (esp. those places that appear in environment variables, e.g., User-Agent)
+  
+- Learning
+
+  - For LFI, learn if a parameter is normally a path. If it is not, detecting attacks is going to be easier.
+  
+  - For RFI, learn if a parameter is normally a URL.
+  
