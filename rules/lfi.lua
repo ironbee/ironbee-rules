@@ -134,25 +134,20 @@ function normalize_path(p)
 end
 
 function is_lfi_attack(a)
-	print("\nInput: " .. a)
+	--print("\nInput: " .. a)
 
 	-- First, convert the input string into something with we can work with.
 	a = decode_path(a)
 	a = normalize_path(a)
 	
-	print("Normalized: " .. a)
+	--print("Normalized: " .. a)
 
 	-- Looking at the string alone, how certain are we that it's a path?
 
 	-- Do not allow PHP wrappers.
 	-- http://php.net/manual/en/wrappers.data.php
-	-- TODO Add attack examples/documentation.
 
-	if string.match(a, "^php:") then
-		return 1
-	end
-
-	if string.match(a, "^data:") then
+	if (pcre.match(a, "^(file|http|ftp|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):")) then
 		return 1
 	end
 
