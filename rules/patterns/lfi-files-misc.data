@@ -1,6 +1,65 @@
-# Common PHP session storage paths
+# Common PHP session storage location
+/lampp/tmp/
+/temp/sess_
 /tmp/sess_
 /var/lib/php/
 /var/lib/php5/
 /wamp/tmp/
-/temp/
+/xampp/tmp/
+
+# Key files
+/config.inc.php
+/etc/httpd/
+/etc/issue
+/etc/motd
+/etc/mysql/
+/etc/passwd
+/proc/self/
+/proc/self/environ
+\autoexec.bat
+\boot.ini
+\web.config
+\windows\win.ini
+\windows\system32\drivers\etc\hosts
+\inetpub\wwwroot\web.config
+
+# Log files
+/apache/logs/
+/apache2/logs/
+/etc/httpd/logs/
+/logs/
+/opt/lampp/logs/
+/opt/wampp/logs/
+/opt/xampp/logs/
+/usr/local/apache/logs/
+/usr/local/apache2/logs/
+/usr/local/etc/httpd/logs/
+/usr/local/www/logs/
+/var/apache/logs/
+/var/log/
+/var/log/auth.log
+/var/log/apache/
+/var/log/apache2/
+/var/log/apache-ssl/
+/var/log/httpd/
+/var/log/httpsd/
+/var/log/secure/
+/var/log/thttpd_log
+/var/log/thttpd/
+/var/httpd/logs/
+/var/www/log/
+/var/www/logs/
+\apache\logs\
+\program files\apache group\apache\logs\
+\program files\wamp\apache2\logs\
+\xampp\apache\logs\
+\wamp\apache\logs\
+\wamp\logs\
+
+# Log fragments
+/access_log
+/access.log
+/error_log
+/error.log
+/ssl_request_log 		
+/thttpd_log

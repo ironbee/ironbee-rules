@@ -177,6 +177,7 @@
 /sysctl.d/
 /system/
 /system32/
+/temp/
 /tinyproxy/
 /tmp/
 /tomcat/
@@ -198,6 +199,7 @@
 /w3svc2/
 /w3svc3/
 /wamp/
+/wampp/
 /web/
 /webalizer/
 /webbackup/
@@ -219,6 +221,18 @@
 10-console-messages.conf
 10-network-security.conf
 10-process-security.conf
+\apache\logs\
+\autoexec.bat
+\boot.ini
+\inetpub\wwwroot\web.config
+\program files\apache group\apache\logs\
+\program files\wamp\apache2\logs\
+\wamp\apache\logs\
+\wamp\logs\
+\web.config
+\windows\system32\drivers\etc\hosts
+\windows\win.ini
+\xampp\apache\logs\
 _log
 aca.txt
 access.conf
@@ -232,9 +246,12 @@ adduser.conf
 admin.php
 alias
 alias.conf
+apache
+apache-ssl
 apache.conf
 apache.conf.php
 apache.log
+apache2
 apache2.conf
 apache2.conf.php
 apache_error.log
@@ -350,6 +367,7 @@ hostname
 hosts
 hosts.allow
 hosts.deny
+httpd
 httpd-default.conf
 httpd-ssl.conf
 httpd-vhosts.conf
@@ -358,6 +376,7 @@ httpd.conf.default
 httpd.conf.php
 httpd2.conf
 httpd_conf.xml
+httpsd
 httpsd_access_log
 ifcfg-eth0
 index.htm
@@ -412,6 +431,7 @@ login.defs
 login_log
 loginlog
 logrotate.conf
+logs
 lpd-errs
 lpnet
 lpsched
@@ -463,6 +483,7 @@ mudlogd.conf
 mudpasswd
 my.cnf
 my.ini
+mysql
 mysql-bin.index
 mysql-bin.log
 mysql-slow.log
@@ -560,9 +581,11 @@ samba.conf
 samba.log
 samba.log1
 samba.log2
+secure
 security
 security_debug_log
 security_log
+self
 sendmail
 sendmail.conf
 sendmail.ini
@@ -605,6 +628,7 @@ squirrelmail.log
 sshd_config
 ssl-global.conf
 ssl.conf
+ssl_request_log 		
 sso.log
 sso_config.ini
 standardjaws.xml
@@ -624,7 +648,8 @@ syslog
 syslog.1
 syslog.conf
 tcp
-temp
+thttpd
+thttpd_log
 time.conf
 timezone
 tinyproxy.conf

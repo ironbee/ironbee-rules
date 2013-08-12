@@ -217,10 +217,9 @@ function is_lfi_attack(a)
 	--              10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
 	--              platform or filesystem supported it.
 
-	-- ATTACK POINT On Windows systems it might be possible to use short names and
+	-- ATTACK POINT TODO On Windows systems it might be possible to use short names and
 	--              other Windows-specific techniques (e.g., Alternative Data Streams) to
 	--              bypass detection: http://code.google.com/p/iis-shortname-scanner-poc/
-	--              TODO
 
 	local filenames = file_lines("lfi-files.data")
 
