@@ -1,0 +1,6 @@
+# Common PHP session storage paths
+/tmp/sess_
+/var/lib/php/
+/var/lib/php5/
+/wamp/tmp/
+/temp/
