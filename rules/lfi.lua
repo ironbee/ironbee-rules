@@ -209,7 +209,7 @@ function is_lfi_attack(a)
 	-- logs, uploaded files, PHP session storage, environment, etc). The latter are
 	-- typically used to escalate LFI to RCE.
 
-	-- ATTACK POINT Our ability to detect attack (using this approach) depends
+	-- ATTACK POINT Our ability to detect attacks (using this approach) depends
 	--              on maintaining a good database of well-known files.
 
 	-- ATTACK POINT Could path segment parameters be used for evasion? For
