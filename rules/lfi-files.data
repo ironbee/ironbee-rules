@@ -484,6 +484,7 @@
 /root/.xauthority
 /srv/www/htdos/squirrelmail/config/config.php
 /system/library/webobjects/adaptors/apache2.2/apache.conf
+/temp/
 /tmp/[jboss]/server/default/conf/jboss-minimal.xml
 /tmp/[jboss]/server/default/conf/jboss-service.xml
 /tmp/[jboss]/server/default/conf/jndi.properties
@@ -496,6 +497,7 @@
 /tmp/[jboss]/server/default/log/boot.log
 /tmp/[jboss]/server/default/log/server.log
 /tmp/access.log
+/tmp/sess_
 /usr/apache/conf/httpd.conf
 /usr/apache2/conf/httpd.conf
 /usr/etc/pure-ftpd.conf
@@ -724,6 +726,8 @@
 /var/data/mysql-bin.index
 /var/lib/mysql/my.cnf
 /var/lib/pgsql/data/postgresql.conf
+/var/lib/php/
+/var/lib/php5/
 /var/lib/squirrelmail/prefs/squirrelmail.log
 /var/lighttpd.log
 /var/local/www/conf/php.ini
@@ -902,6 +906,7 @@
 /wamp/logs/genquery.log
 /wamp/logs/mysql.log
 /wamp/logs/slowquery.log
+/wamp/tmp/
 /web/conf/php.ini
 /windows/comsetup.log
 /windows/debug/netsetup.log

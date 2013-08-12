@@ -510,8 +510,10 @@ pgadmin.log
 pgsql.log
 pgsql8.log
 pgsql_log
+php
 php.conf
 php.ini
+php5
 php5.conf
 phpmyadmin.conf
 plesk.conf
@@ -572,6 +574,7 @@ server.log
 server.log.properties
 server.xml
 services
+sess_
 setenvif.conf
 setup.log
 setup.php
@@ -621,9 +624,11 @@ syslog
 syslog.1
 syslog.conf
 tcp
+temp
 time.conf
 timezone
 tinyproxy.conf
+tmp
 tomcat.options
 tor-tsocks.conf
 tpvmlp.conf

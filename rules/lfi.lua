@@ -198,8 +198,10 @@ function is_lfi_attack(a)
 		end
 	end
 
-	-- TODO Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID).
-	-- TODO Detect attempts to look for files in /tmp.
+	-- Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID). To
+	-- do this, we have common session storage locations on the known files list. The
+	-- paths are usually /tmp/, /var/lib/php5/ (Debian, Ubuntu), and /var/lib/php/session
+	-- (Red Hat). The format of each session file is sess_SESSIONID.
 
 	-- Look for well-known files; this should be a pretty strong indication of attack.
 	-- Our list includes files that might contain information useful to the attacker,
