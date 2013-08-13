@@ -3,6 +3,19 @@
 require "luarocks.loader"
 local pcre = require "rex_pcre"
 
+function count_matches(haystack, needle)
+	local count = 0
+	local i = 0
+	
+	while true do
+		i = string.find(haystack, needle, i + 1)
+		if i == nil then break end
+		count = count + 1
+	end
+
+	return count
+end
+
 function file_lines(f) 
 	local a = {}
 
@@ -125,7 +138,7 @@ function normalize_path(p)
 	end
 
 	-- Then, perform RFC normalization to remove the ./ and ../ fragments.
-	path = remove_dot_segments(path)
+	-- path = remove_dot_segments(path)
 
 	-- Finally, compress consecutive forward slashes.
 	path = string.gsub(path, "/+", "/")
@@ -137,10 +150,27 @@ function is_lfi_attack(a)
 	--print("\nInput: " .. a)
 
 	-- First, convert the input string into something with we can work with.
+	
 	a = decode_path(a)
+	
 	a = normalize_path(a)
+
+	-- Count ./ and ../ fragments before we remove them.
+
+	local self_references = count_matches(a, "/%./")
+	if string.match(a, "^%./") then
+		self_references = self_references + 1
+	end
+
+	local back_references = count_matches(a, "/%.%./")
+	if string.match(a, "^%.%./") then
+		back_references = back_references + 1
+	end
+
+	a = remove_dot_segments(a)
 	
 	--print("Normalized: " .. a)
+
 
 	-- Looking at the string alone, how certain are we that it's a path?
 
