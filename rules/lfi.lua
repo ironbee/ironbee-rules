@@ -147,6 +147,8 @@ function is_lfi_attack(a)
 	-- Do not allow PHP wrappers.
 	-- http://php.net/manual/en/wrappers.data.php
 
+	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
+	-- do note that the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
 	if (pcre.match(a, "^(file|http|ftp|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):")) then
 		return 1
 	end
