@@ -3,6 +3,8 @@
 require "luarocks.loader"
 local pcre = require "rex_pcre"
 
+local debug = false
+
 function count_matches(haystack, needle)
 	local count = 0
 	local i = 0
@@ -20,8 +22,10 @@ function file_lines(f)
 	local a = {}
 
 	for line in io.lines(f) do
-		-- print(line)
-		if (line:sub(1,1) ~= '#') then 
+		line = trim(line)
+
+		-- Ignore empty lines and comments
+		if ( (line:sub(1,1) ~= '#') and (line:len() ~= 0) ) then 
 			a[#a + 1] = line
 		end
 	end
@@ -147,13 +151,23 @@ function normalize_path(p)
 end
 
 function is_lfi_attack(a)
-	--print("\nInput: " .. a)
+	if debug then
+		print("\nInput: " .. a)
+	end
 
 	-- First, convert the input string into something with we can work with.
 	
 	a = decode_path(a)
+
+	if debug then
+		print("After decoding: " .. a)
+	end
 	
 	a = normalize_path(a)
+
+	if debug then
+		print("After normalization: " .. a)
+	end
 
 	-- Count ./ and ../ fragments before we remove them.
 
@@ -168,6 +182,10 @@ function is_lfi_attack(a)
 	end
 
 	a = remove_dot_segments(a)
+
+	if debug then
+		print("After dot segments: " .. a)
+	end
 	
 	--print("Normalized: " .. a)
 
@@ -184,51 +202,10 @@ function is_lfi_attack(a)
 	end
 
 	local p = 0
-	
-	--[[
-
-	-- Entry point: absolute path and relative path. In PHP, relative paths
-	-- are evaluated in the context of include_path configuration.
-
-	-- TODO There is some value in detecting strings that might be paths.
-
-	Portable Filename Character Set: [-a-zA-Z0-9_.]
-	http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap03.html#tag_03_276
-
-	-- The beginning looks like an absolute Unix of Windows path?
-	if (pcre.match(a, "^([a-z]:)?/")) then
-		p = 0.section-5
-	end
-
-	-- TODO If the normalized version begins with ./ or ../, it's clearly a path.
-
-	-- The first 128 characters are the same as those typically used in a path?
-	if (pcre.match(a, "^[-~:/a-zA-Z0-9._ ]{0,128}")) then
-		p = 0.5
-	end
-
-	-- Do not proceed if input does not look like a path. This is our attempt to
-	-- minimize false positives, although it may be dangerous if someone can convince
-	-- us that something does not look a path, even if it is.
-	if (p == 0) then
-		return 0
-	end
-	]]--
-
-	-- Look for well-known path fragments; this is a weaker indication of attack,
-	-- but may catch those attacks that avoid referencing well-known files.
-		
-	-- TODO Correlate with: does input look like a path?
-
-	local patterns = file_lines("lfi-fragments.data")
-	for i, v in ipairs(patterns) do
-		local pattern = escape_lua_metachars(v)
-
-		-- Look for the fragment anywhere in the input string.
-		if (string.find(a, pattern)) then
-			p = 0.8
-		end
-	end
+	local looks_like_a_path = false
+	local have_full_match = false
+	local have_fragment_match = false
+	local has_nul_byte = false
 
 	-- Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID). To
 	-- do this, we have common session storage locations on the known files list. The
@@ -271,6 +248,12 @@ function is_lfi_attack(a)
 
 		if (string.find(a, pattern)) then
 			p = 1
+
+			have_full_match = true
+			
+			if debug then
+				print("Matched: " .. pattern)
+			end
 		else
 			-- Try again, first prepending a forward slash to the input string. We want to
 			-- be extra vigilent and match patterns such as "etc/passwd" (our list will
@@ -278,15 +261,41 @@ function is_lfi_attack(a)
 			-- TODO Change the implementation to avoid having to match twice.
 			if (string.find("/" .. a, pattern)) then
 				p = 1
+
+				have_full_match = true
+
+				if debug then
+				print("Matched: " .. pattern)
+			end
 			end
 		end
 	end
 
-	-- TODO Look at the string before normalization. Does it look like an LFI attack?
+	if have_full_match == false then
+		-- Look for well-known path fragments; this is a weaker indication of attack,
+		-- but may catch those attacks that avoid referencing well-known files.
 
-	-- TODO Self-references in the path.
+		local patterns = file_lines("lfi-fragments.data")
+		for i, v in ipairs(patterns) do
+			local pattern = escape_lua_metachars(v)
 
-	-- TODO Backreferences in the path.
+			-- Look for the fragment anywhere in the input string.
+			if (string.find(a, pattern)) then
+				have_fragment_match = true
+			end
+		end
+	end
+
+	-- The first 128 characters are the same as those typically used in a path?
+	-- Portable Filename Character Set: [-a-zA-Z0-9_.]
+	-- http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap03.html#tag_03_276
+	if (pcre.match(a, "^[-~:/a-zA-Z0-9._ ]{0,128}")) then
+		-- To minimize false positives, require at least one
+		-- forward slash to decide the input looks like a path.
+		if (string.find(a, "/")) then
+			looks_like_a_path = true
+		end
+	end
 
 	-- Many of the following techniques are obsolete, but we can expect to continue to see
 	-- them because 1) unpatched systems remain, 2) tools continue to have them, and 3) the
@@ -299,7 +308,7 @@ function is_lfi_attack(a)
 	-- Increase our confidence if we see a NUL byte. In general, NUL bytes should probably
 	-- not be allowed, but we'll leave other rules to take care of that.
 	if (string.find(a, string.char(0))) then
-		p = p + 0.4
+		has_nul_byte = true
 	end
 
 	-- TODO PHP path truncation attacks:
@@ -313,6 +322,41 @@ function is_lfi_attack(a)
 	-- TODO PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
 	--			http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
 
+	if debug then
+		print("Have full match: " .. tostring(have_full_match))
+		print("Have fragment match: " .. tostring(have_fragment_match))
+		print("Looks like a path: " .. tostring(looks_like_a_path))
+		print("Has NUL byte: " .. tostring(has_nul_byte))
+		print("Self-references: " .. self_references)
+		print("Back-references: " .. back_references)
+	end
+
+	-- Decision time.
+
+	if have_full_match then
+		p = 1
+	else
+		if looks_like_a_path then
+			p = 0.2
+
+			if have_fragment_match then
+				p = 0.5
+			end
+		end
+	end
+
+	if has_nul_byte then
+		p = p + 0.1
+	end
+
+	if self_references > 0 then
+		p = p + 0.1
+	end
+
+	if back_references > 0 then
+		p = p + 0.1
+	end
+
 	return p
 end
 
@@ -321,3 +365,5 @@ local attacks = file_lines("lfi-attacks.data")
 for i, v in ipairs(attacks) do
 	print(i, v, is_lfi_attack(v))
 end
+
+-- print(is_lfi_attack("/etc/something"))
