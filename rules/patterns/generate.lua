@@ -25,8 +25,8 @@ function file_lines(f)
 	local a = {}
 
 	for line in io.lines(f) do
-		-- Ignore comments
-		if (line:sub(1, 1) ~= '#') then 
+		-- Ignore empty lines and comments
+		if ( (line:sub(1,1) ~= '#') and (line:len() ~= 0) ) then 
 			table.insert(a, line)
 		end
 	end
