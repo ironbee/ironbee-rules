@@ -6,6 +6,7 @@
 /var/lib/php5/
 /wamp/tmp/
 /xampp/tmp/
+/windows/temp/
 
 # Key files
 /config.inc.php
@@ -55,6 +56,7 @@
 \xampp\apache\logs\
 \wamp\apache\logs\
 \wamp\logs\
+\windows\temp\
 
 # Log fragments
 /access_log
