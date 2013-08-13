@@ -1,6 +1,8 @@
 
 
 
+/.htaccess
+/.htpasswd
 /[jboss]/server/default/conf/jboss-minimal.xml
 /[jboss]/server/default/conf/jboss-service.xml
 /[jboss]/server/default/conf/jndi.properties

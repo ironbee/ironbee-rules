@@ -63,3 +63,5 @@
 /error.log
 /ssl_request_log 		
 /thttpd_log
+/.htaccess
+/.htpasswd

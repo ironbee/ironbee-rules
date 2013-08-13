@@ -3,6 +3,7 @@
 .bash_logout
 .bashrc
 .htaccess
+.htpasswd
 .ksh_history
 .lighttpdpassword
 .xauthority
