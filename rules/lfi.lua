@@ -141,8 +141,7 @@ function normalize_path(p)
 		path = capture
 	end
 
-	-- Then, perform RFC normalization to remove the ./ and ../ fragments.
-	-- path = remove_dot_segments(path)
+	-- TODO Multiple consecutive path segment separators as an indication of evasion?
 
 	-- Finally, compress consecutive forward slashes.
 	path = string.gsub(path, "/+", "/")
