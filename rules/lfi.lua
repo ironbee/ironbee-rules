@@ -295,6 +295,9 @@ function is_lfi_attack(a)
 		if (string.find(a, "/")) then
 			looks_like_a_path = true
 		end
+
+		-- TODO Input that begins with a drive letter (e.g., c:), dot, and slash
+		--      is more likely to be a path.
 	end
 
 	-- Many of the following techniques are obsolete, but we can expect to continue to see
