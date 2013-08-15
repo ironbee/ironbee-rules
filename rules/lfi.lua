@@ -197,23 +197,26 @@ function is_lfi_attack(a)
 	--print("Normalized: " .. a)
 
 
-	-- Looking at the string alone, how certain are we that it's a path?
-
-	-- Do not allow PHP wrappers.
-	-- http://php.net/manual/en/wrappers.data.php
-
-	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
-	-- do note that the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
-	if pcre.match(a, "^(file|http|ftp|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):") then
-		return 1
-	end
-
 	local p = 0
 	local looks_like_a_path = false
 	local have_full_match = false
 	local have_fragment_match = false
 	local has_nul_byte = false
 	local upload_tmp_attack = false
+	local seen_php_wrapper = false
+
+
+	-- PHP wrappers (http://php.net/manual/en/wrappers.data.php)
+	--
+	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
+	-- the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
+
+	if pcre.match(a, "^(file|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):") then
+		-- NOTE We do not detect http, https, and ftp schemes as wrappers. We focus
+		--      on LFI here, and those fall under RFI.
+		seen_php_wrapper = true
+	end
+
 
 	-- Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID). To
 	-- do this, we have common session storage locations on the known files list. The
@@ -255,8 +258,6 @@ function is_lfi_attack(a)
 		local pattern = "^" .. escape_lua_metachars(v)
 
 		if string.find(a, pattern) then
-			p = 1
-
 			have_full_match = true
 			
 			if debug then
@@ -268,8 +269,6 @@ function is_lfi_attack(a)
 			-- contain it as /etc/passwd).
 			-- TODO Change the implementation to avoid having to match twice.
 			if (string.find("/" .. a, pattern)) then
-				p = 1
-
 				have_full_match = true
 
 				if debug then
@@ -293,6 +292,7 @@ function is_lfi_attack(a)
 			end
 		end
 	end
+
 
 	-- The first 128 characters are the same as those typically used in a path?
 	-- Portable Filename Character Set: [-a-zA-Z0-9_.]
