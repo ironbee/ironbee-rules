@@ -208,7 +208,7 @@ for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 }
 
 if ($count == 0) {
-	print("    none");
+	print("    none\n");
 }
 
 print("\n");
@@ -233,7 +233,7 @@ for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 }
 
 if ($count == 0) {
-	print("    none");
+	print("    none\n");
 }
 
 print("\n");
@@ -258,7 +258,7 @@ for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 }
 
 if ($count == 0) {
-	print("    none");
+	print("    none\n");
 }
 
 print("\n");
