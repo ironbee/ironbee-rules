@@ -1,4 +1,18 @@
-# Common PHP session storage location
+# This file contains a list of known paths that might be used in
+# an LFI attack. The format is still evolving; at the moment it is
+# pretty disorganised.
+
+# TODO Combine everything into a single list.
+
+# Notes:
+#  - Use lowercase.
+#  - Do not use drive letters for Windows paths.
+#  - Directories should end with a slash.
+#  - This file contains both directories and filenames.
+#  - Add filenames with a slash at the beginning.
+#  - Don't worry about duplication and/or performance.
+
+# Common PHP session storage locations
 /lampp/tmp/
 /temp/sess_
 /tmp/sess_
@@ -8,15 +22,33 @@
 /xampp/tmp/
 /windows/temp/
 
-# Key files
+# Key files and locations
 /config.inc.php
+/etc/apache/
+/etc/apache2/
 /etc/httpd/
+/etc/init.d/
 /etc/issue
 /etc/motd
 /etc/mysql/
+/etc/rc.d/
+/etc/rc.conf
 /etc/passwd
+/etc/sysconfig/
 /proc/self/
 /proc/self/environ
+/srv/httpd/htdocs/
+/srv/www/
+/usr/lib/
+/usr/lib(64)/httpd/
+/usr/local/
+/usr/local/etc/apache22/httpd.conf
+/usr/local/etc/rc.d/apache2.sh
+/usr/local/sbin/apachectl2
+/usr/local/www/
+/usr/pkg/
+/usr/sbin/
+/var/spool/
 \autoexec.bat
 \boot.ini
 \web.config
@@ -29,6 +61,7 @@
 /apache2/logs/
 /etc/httpd/logs/
 /logs/
+/Library/WebServer/
 /opt/lampp/logs/
 /opt/wampp/logs/
 /opt/xampp/logs/
@@ -36,7 +69,12 @@
 /usr/local/apache2/logs/
 /usr/local/etc/httpd/logs/
 /usr/local/www/logs/
+/var/apache/
+/var/apache2/
 /var/apache/logs/
+/var/lib/
+/var/lib/locate.db
+/var/lib/mlocate/mlocate.db
 /var/log/
 /var/log/auth.log
 /var/log/apache/
@@ -48,10 +86,17 @@
 /var/log/thttpd_log
 /var/log/thttpd/
 /var/httpd/logs/
+/var/www
 /var/www/log/
 /var/www/logs/
 \apache\logs\
+\program files\
+\program files\apache group\
 \program files\apache group\apache\logs\
+\program files\apache software foundation\
+\program files\apache software foundation\apache\
+\program files\apache software foundation\apache2.2\
+\program files\apache software foundation\apache2.4\
 \program files\wamp\apache2\logs\
 \xampp\apache\logs\
 \wamp\apache\logs\
@@ -63,7 +108,12 @@
 /access.log
 /error_log
 /error.log
+/htdocs
+/httpd.conf
+/passwd
 /ssl_request_log 		
 /thttpd_log
 /.htaccess
 /.htpasswd
+/locate.db
+/mlocate.db
