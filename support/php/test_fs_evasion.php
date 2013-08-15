@@ -306,8 +306,6 @@ for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 
 	if (test($f)) {
 		if (strtolower($f) != strtolower($FILENAME)) {
-			print("[$f]\n");
-			print("[$FILENAME]\n");
 			print_char($c);
 			$count++;
 		}
