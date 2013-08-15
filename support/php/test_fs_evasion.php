@@ -288,4 +288,68 @@ if ($count == 0) {
 
 print("\n");
 
+// --------------------
+
+print("One character wildcards:\n");
+
+$count = 0;
+
+$MY_FILENAME = substr($FILENAME, 0, strlen($FILENAME) - 1);
+$last_char = substr($FILENAME, strlen($FILENAME) - 1, strlen($FILENAME));
+
+for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
+	$f = $MY_FILENAME . chr($c);
+	
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		if (strtolower($f) != strtolower($FILENAME)) {
+			print("[$f]\n");
+			print("[$FILENAME]\n");
+			print_char($c);
+			$count++;
+		}
+	}
+}
+
+if ($count == 0) {
+	print("    none\n");
+}
+
+print("\n");
+
+// --------------------
+
+print("Two character wildcards:\n");
+
+$count = 0;
+
+$MY_FILENAME = substr($FILENAME, 0, strlen($FILENAME) - 1);
+$last_char = substr($FILENAME, strlen($FILENAME) - 1, strlen($FILENAME));
+
+for ($c1 = $RANGE_MIN; $c1 < 256; $c1++) {
+	for ($c2 = $RANGE_MIN; $c2 < 256; $c2++) {
+		$f = $MY_FILENAME . chr($c1) . chr($c2);
+	
+		if (isset($DEBUG)) {
+			print("Try: $f\n");
+		}
+
+		if (test($f)) {
+			if (strtolower($f) != strtolower($FILENAME)) {
+				print_char($c);
+				$count++;
+			}
+		}
+	}
+}
+
+if ($count == 0) {
+	print("    none\n");
+}
+
+print("\n");
+
 ?>
