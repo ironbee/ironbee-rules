@@ -382,6 +382,10 @@ function is_lfi_attack(a)
 		end
 	end
 
+	if seen_php_wrapper then
+		p = max(p, 1)
+	end
+
 	if has_nul_byte then
 		p = p + 0.1
 	end
