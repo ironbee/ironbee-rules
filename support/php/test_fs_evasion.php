@@ -4,11 +4,17 @@
 $FILENAME = "test_fs_evasion.php";
 
 function test($f) {
+	global $FILENAME;
+
 	$contents = @file_get_contents($f);	
 
 	if (empty($contents)) {
 		return false;
 	} else {
+		if (strpos($contents, $FILENAME) === false) {
+			die("Did not actually get file content!");
+		}
+
 		return true;
 	}
 }
@@ -37,6 +43,43 @@ function uniord($c)
 function print_char($c) {
 	print("    0x" . dechex($c) . "\n");
 }
+
+function print_platform_info() {
+	print("Current PHP version: ");
+	if (defined('PHP_VERSION_ID')) {
+		print(PHP_VERSION . PHP_EXTRA_VERSION);
+	} else {
+		print(phpversion());
+	}
+
+	print("\n\n");
+
+	print("Operating system: " . php_uname() . "\n\n");
+
+	if (defined('PHP_MAXPATHLEN')) {
+		print("PHP_MAXPATHLEN: " . PHP_MAXPATHLEN . "\n\n");
+	}
+
+	print("Extensions: ");
+	
+	foreach (get_loaded_extensions() as $i => $ext) {
+    	print($ext);
+    	$version = phpversion($ext);
+    	if (!empty($version)) {
+    		print(" ($version) ");
+    	}
+	}
+
+	print("\n");
+
+	print("\n");
+}
+
+
+// -- Main ---
+
+print_platform_info();
+
 
 // First check that we can actually open the test file.
 if (!test($FILENAME)) {
