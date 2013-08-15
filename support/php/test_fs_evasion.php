@@ -50,7 +50,7 @@ function print_char($c) {
 function print_platform_info() {
 	print("Current PHP version: ");
 	if (defined('PHP_VERSION_ID')) {
-		print(PHP_VERSION . PHP_EXTRA_VERSION);
+		print(PHP_VERSION);
 	} else {
 		print(phpversion());
 	}
