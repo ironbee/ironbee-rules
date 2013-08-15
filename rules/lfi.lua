@@ -33,7 +33,7 @@ function file_lines(f)
 		line = trim(line)
 
 		-- Ignore empty lines and comments
-		if ( (line:sub(1,1) ~= '#') and (line:len() ~= 0) ) then 
+		if (line:sub(1,1) ~= '#') and (line:len() ~= 0) then 
 			a[#a + 1] = line
 		end
 	end
@@ -86,7 +86,7 @@ function remove_dot_segments(s)
 end
 
 function trim(s)
-  return (s:gsub("^%s*(.-)%s*$", "%1"))
+  return s:gsub("^%s*(.-)%s*$", "%1")
 end
 
 function decode_path(p)
@@ -204,7 +204,7 @@ function is_lfi_attack(a)
 
 	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
 	-- do note that the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
-	if (pcre.match(a, "^(file|http|ftp|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):")) then
+	if pcre.match(a, "^(file|http|ftp|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):") then
 		return 1
 	end
 
@@ -254,7 +254,7 @@ function is_lfi_attack(a)
 
 		local pattern = "^" .. escape_lua_metachars(v)
 
-		if (string.find(a, pattern)) then
+		if string.find(a, pattern) then
 			p = 1
 
 			have_full_match = true
@@ -318,8 +318,8 @@ function is_lfi_attack(a)
 	--     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
 	--     https://bugs.php.net/bug.php?id=39863
 
-	-- Increase our confidence if we see a NUL byte. In general, NUL bytes should probably
-	-- not be allowed, but we'll leave other rules to take care of that.
+	-- NUL bytes should probably not be allowed, but we'll leave other rules
+	-- to take care of that. We'll only detect.
 	if (string.find(a, string.char(0))) then
 		has_nul_byte = true
 	end
@@ -333,7 +333,7 @@ function is_lfi_attack(a)
 	--      http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
 
 	-- PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
-	-- http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
+	--     http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
 	
 	if looks_like_a_path then
 		-- Examples:
@@ -378,7 +378,7 @@ function is_lfi_attack(a)
 		end
 
 		if upload_tmp_attack then
-			p = 1
+			p = p + 0.6
 		end
 	end
 
