@@ -297,6 +297,8 @@ function is_lfi_attack(a)
 
 		-- TODO Input that begins with a drive letter (e.g., c:), dot, and slash
 		--      is more likely to be a path.
+
+		-- TODO Path detection should be better.
 	end
 
 	-- Many of the following techniques are obsolete, but we can expect to continue to see
