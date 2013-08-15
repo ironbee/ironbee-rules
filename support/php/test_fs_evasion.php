@@ -44,7 +44,23 @@ function uniord($c)
 }
 
 function print_char($c) {
-	print("    0x" . dechex($c) . "\n");
+	print("    ");
+
+	for ($i = 0; $i < func_num_args(); $i++) {
+		if ($i > 0) {
+			print(", ");
+		}
+
+		$c = func_get_arg($i);
+
+		print("0x" . dechex($c));
+
+		if ($c >= 32) {
+			print(" (" . utf8($c) . ")");
+		}	
+	}
+
+	print("\n");
 }
 
 function print_platform_info() {
