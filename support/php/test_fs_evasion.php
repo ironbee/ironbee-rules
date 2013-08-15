@@ -2,6 +2,9 @@
 <?php
 
 $FILENAME = "test_fs_evasion.php";
+$RANGE_MIN = 0;
+$RANGE_MAX = 65536;
+//$DEBUG = true;
 
 function test($f) {
 	global $FILENAME;
@@ -75,6 +78,18 @@ function print_platform_info() {
 	print("\n");
 }
 
+function pad_filename($FILENAME, $len) {
+	$f = "./";
+	
+	while($len--) {
+		$f = $f . "x";
+	}
+
+	$f = $f . "/../" . $FILENAME;
+
+	return $f;
+}
+
 
 // -- Main ---
 
@@ -88,12 +103,104 @@ if (!test($FILENAME)) {
 
 // --------------------
 
+print("Max path length:\n");
+
+$f = $FILENAME;
+$len = 1;
+
+for (;;) {
+	$f = pad_filename($FILENAME, $len);
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (!test($f)) {
+		print("    " . strlen($f) . "\n");
+		break;
+	}
+
+	$len++;
+}
+
+print("\n");
+
+// Determine if the characters after maximum length are ignored.
+
+$f = pad_filename($FILENAME, $len - 1);
+if (!test($f)) {
+	die("Unexpected failure.\n");
+}
+
+$f = $f . "x";
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("Adding content past MAX_PATH works (len " . strlen($f) . ").\n");
+} else {
+	print("Adding content past MAX_PATH does not work (len " . strlen($f) . ").\n");
+}
+
+print("\n");
+
+// Determine . path truncation
+
+$f = pad_filename($FILENAME, $len - 1);
+if (!test($f)) {
+	die("Unexpected failure.\n");
+}
+
+$f = $f . ".";
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("Path . truncation works.\n");
+} else {
+	print("Path . truncation does not work.\n");
+}
+
+print("\n");
+
+// Determine .\ path truncation
+
+$f = pad_filename($FILENAME, $len - 2);
+if (!test($f)) {
+	die("Unexpected failure.\n");
+}
+
+$f = $f . ".\\";
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("Path .\\ truncation works.\n");
+} else {
+	print("Path .\\ truncation does not work.\n");
+}
+
+print("\n");
+
+// --------------------
+
 print("Ignored when appended to a filename:\n");
 
 $count = 0;
 
-for ($c = 0; $c < 65536; $c++) {
+for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 	$f = $FILENAME . utf8($c);
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
 	if (test($f)) {
 		print_char($c);
 		$count++;
@@ -112,8 +219,13 @@ print("Ignored when prepended to a filename:\n");
 
 $count = 0;
 
-for ($c = 0; $c < 65536; $c++) {
+for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 	$f = utf8($c) . $FILENAME;
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
 	if (test($f)) {
 		print_char($c);
 		$count++;
@@ -132,8 +244,13 @@ print("Ignored inside a filename:\n");
 
 $count = 0;
 
-for ($c = 0; $c < 65536; $c++) {
+for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 	$f = substr($FILENAME, 0, 5) . utf8($c) . substr($FILENAME, 5);
+	
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
 	if (test($f)) {
 		print_char($c);
 		$count++;
@@ -152,8 +269,13 @@ print("Filename terminators:\n");
 
 $count = 0;
 
-for ($c = 0; $c < 65536; $c++) {
+for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 	$f = $FILENAME . utf8($c) . ".some.random.stuff";
+	
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
 	if (test($f)) {
 		print_char($c);
 		$count++;
@@ -161,7 +283,7 @@ for ($c = 0; $c < 65536; $c++) {
 }
 
 if ($count == 0) {
-	print("    none");
+	print("    none\n");
 }
 
 print("\n");
