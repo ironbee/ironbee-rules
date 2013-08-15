@@ -314,7 +314,7 @@ $MY_FILENAME = substr($FILENAME, 0, strlen($FILENAME) - 1);
 $last_char = substr($FILENAME, strlen($FILENAME) - 1, strlen($FILENAME));
 
 for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
-	$f = $MY_FILENAME . chr($c);
+	$f = $MY_FILENAME . utf8($c);
 	
 	if (isset($DEBUG)) {
 		print("Try: $f\n");
@@ -343,7 +343,7 @@ $count = 0;
 $MY_FILENAME = substr($FILENAME, 0, strlen($FILENAME) - 3);
 
 for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
-	$f = $MY_FILENAME . chr($c);
+	$f = $MY_FILENAME . utf8($c);
 	
 	if (isset($DEBUG)) {
 		print("Try: $f\n");
