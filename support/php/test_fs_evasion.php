@@ -56,7 +56,7 @@ function print_char($c) {
 		print("0x" . dechex($c));
 
 		if ($c >= 32) {
-			print(" (" . utf8($c) . ")");
+			print(" '" . utf8($c) . "'");
 		}	
 	}
 
@@ -353,7 +353,7 @@ for ($c1 = $RANGE_MIN; $c1 < 256; $c1++) {
 
 		if (test($f)) {
 			if (strtolower($f) != strtolower($FILENAME)) {
-				print_char($c);
+				print_char($c1, $c2);
 				$count++;
 			}
 		}
