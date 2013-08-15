@@ -5,6 +5,14 @@ local pcre = require "rex_pcre"
 
 local debug = false
 
+function max(v1, v2)
+	if v1 > v2 then
+		return v1
+	else
+		return v2
+	end
+end
+
 function count_matches(haystack, needle)
 	local count = 0
 	local i = 0
@@ -205,6 +213,7 @@ function is_lfi_attack(a)
 	local have_full_match = false
 	local have_fragment_match = false
 	local has_nul_byte = false
+	local upload_tmp_attack = false
 
 	-- Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID). To
 	-- do this, we have common session storage locations on the known files list. The
@@ -316,15 +325,34 @@ function is_lfi_attack(a)
 	end
 
 	-- TODO PHP path truncation attacks:
-	--			http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
-	--			http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
+	--		http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
+	--		http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
 
 	-- TODO PHP MAX_PATH truncation attack.
-	--      	Another alternative for NULL byte
-	--      	http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
+	--      Another alternative for NULL byte
+	--      http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
 
-	-- TODO PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
-	--			http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
+	-- PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
+	-- http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
+	
+	if looks_like_a_path then
+		-- Examples:
+		--   c:/windows/temp/php<<
+		--   c:/windows/temp/php12<<
+    	--   c:/windows/temp/php>>>>.tmp
+        --   c:/windows/temp/php<<%00garbage
+        --   c:/windows/temp/php>>>>
+		if (pcre.match(a, "php[a-f0-9><]+(?:\\.tmp)?(?:\\x00.*)?$")) then
+			upload_tmp_attack = true
+		end
+
+		-- Examples:
+		--   /tmp/php67DedX
+		--   /tmp/php67DedX%00garbage
+		if (pcre.match(a, "php[a-z0-9]+(?:\\x00.*)?$")) then
+			upload_tmp_attack = true
+		end
+	end
 
 	if debug then
 		print("Have full match: " .. tostring(have_full_match))
@@ -333,6 +361,7 @@ function is_lfi_attack(a)
 		print("Has NUL byte: " .. tostring(has_nul_byte))
 		print("Self-references: " .. self_references)
 		print("Back-references: " .. back_references)
+		print("Upload temporary file attack: " .. tostring(upload_tmp_attack))
 	end
 
 	-- Decision time.
@@ -346,6 +375,10 @@ function is_lfi_attack(a)
 			if have_fragment_match then
 				p = 0.5
 			end
+		end
+
+		if upload_tmp_attack then
+			p = 1
 		end
 	end
 
@@ -370,4 +403,4 @@ for i, v in ipairs(attacks) do
 	print(i, v, is_lfi_attack(v))
 end
 
--- print(is_lfi_attack("/etc/something"))
+-- print(is_lfi_attack("c:/windows/temp/php123%00garbage"))

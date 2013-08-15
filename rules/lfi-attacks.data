@@ -36,3 +36,10 @@ data:,<? echo "yay"; ?>
 /var/lib/php5/sess_012345678
 /var/lib/php/sessions/sess_012345678
 /etc/something
+c:/windows/temp/php<<
+c:/windows/temp/php<<%00garbage
+c:/windows/temp/php12<<
+c:/windows/temp/php>>>>
+c:/windows/temp/php>>>>.tmp
+/tmp/php67DedX
+/tmp/php67DedX%00garbage
