@@ -223,6 +223,7 @@ function is_lfi_attack(a)
 	-- paths are usually /tmp/, /var/lib/php5/ (Debian, Ubuntu), and /var/lib/php/session
 	-- (Red Hat). The format of each session file is sess_SESSIONID.
 
+
 	-- Look for well-known files; this should be a pretty strong indication of attack.
 	-- Our list includes files that might contain information useful to the attacker,
 	-- as well as files that the attacker might write to indirectly (e.g., web server
@@ -278,11 +279,13 @@ function is_lfi_attack(a)
 		end
 	end
 
-	if have_full_match == false then
-		-- Look for well-known path fragments; this is a weaker indication of attack,
-		-- but may catch those attacks that avoid referencing well-known files.
 
+	-- Look for well-known path fragments; this is a weaker indication of attack,
+	-- but may catch those attacks that avoid referencing well-known files.
+
+	if have_full_match == false then
 		local patterns = file_lines("lfi-fragments.data")
+
 		for i, v in ipairs(patterns) do
 			local pattern = escape_lua_metachars(v)
 
@@ -310,9 +313,11 @@ function is_lfi_attack(a)
 		-- TODO Path detection should be better.
 	end
 
+
 	-- Many of the following techniques are obsolete, but we can expect to continue to see
 	-- them because 1) unpatched systems remain, 2) tools continue to have them, and 3) the
 	-- attackers will try anything.
+
 
 	-- NUL byte attack against PHP (CVE-2006-7243). Fixed in PHP 5.3.4.
 	--     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
@@ -324,13 +329,16 @@ function is_lfi_attack(a)
 		has_nul_byte = true
 	end
 
+
 	-- TODO PHP path truncation attacks:
 	--		http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
 	--		http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
 
+
 	-- TODO PHP MAX_PATH truncation attack.
 	--      Another alternative for NULL byte
 	--      http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
+
 
 	-- PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
 	--     http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
