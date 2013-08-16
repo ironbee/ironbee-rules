@@ -1,0 +1,70 @@
+Current PHP version: 5.3.10-1ubuntu3.7
+
+Operating system: Linux gu 3.5.0-23-generic #35~precise1-Ubuntu SMP Fri Jan 25 17:13:26 UTC 2013 x86_64
+
+PHP_MAXPATHLEN: 4096
+
+Extensions: Core (5.3.10-1ubuntu3.7) date (5.3.10-1ubuntu3.7) ereglibxmlopensslpcrezlib (1.1) bcmathbz2calendarctypedbadom (20031129) hash (1.0) fileinfo (1.0.5-dev) filter (0.11.0) ftpgettextSPL (0.2) iconvjson (1.2.1) mbstringpcntlsessionposixreadlineReflection ($Revision: 321634 $) standard (5.3.10-1ubuntu3.7) shmopSimpleXML (0.1) soapsocketsPhar (2.0.1) exif (1.4 $Id: exif.c 321634 2012-01-01 13:15:04Z felipe $) sysvmsgsysvsemsysvshmtokenizer (0.1) wddxxmlxmlreader (0.1) xmlwriter (0.1) zip (1.9.1) PDO (1.0.4dev) mhash
+
+Short (DOS/8.3) filename test:
+    no
+
+Ignores dot at the beginning of file name:
+    no
+
+Max path length (terminating NUL excluded):
+    4095
+
+Adding content past MAXPATHLEN does not work (len 4095).
+
+One character ignored when appended to a filename:
+    none
+
+Two characters ignored when appended to a filename:
+    none
+
+Testing ./ at the end of filename:
+    no
+
+Testing /. at the end of filename:
+    no
+
+Testing .\ at the end of filename:
+    no
+
+Testing \. at the end of filename:
+    no
+
+Testing ..... at the end of filename:
+    no
+
+Testing ::$DATA at the end of filename:
+    no
+
+Testing \\.\ at the beginning of filename:
+    no
+
+Testing //./ at the beginning of filename:
+    yes
+
+Testing \\?\ at the beginning of filename:
+    no
+
+Ignored when prepended to a filename:
+    none
+
+Ignored inside a filename:
+    none
+
+Filename terminators:
+    none
+
+Single character wildcards:
+    none
+
+Multi-character wildcards:
+    none
+
+Double-quote works as a dot:
+    no
+
