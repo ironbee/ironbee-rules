@@ -314,6 +314,9 @@ function is_lfi_attack(a)
 
 		-- TODO This implementation fails to take into account ignorable UTF-8 characters
 		--      that exist on OS X (need to determine exactly what filesystem is that).
+
+		-- TODO This implementation fails to take into account that PHP on Windows accepts
+		--      < and > as wildcard characters, and that a double quote is converted to a dot.
 	end
 
 
