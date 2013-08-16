@@ -1,6 +1,30 @@
 #!/usr/bin/env php
 <?php
 
+/*
+
+Useful references and prior work, in no particular order:
+
+ - Naming Files, Paths, and Namespaces (Microsoft)
+   http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+   
+ - File Streams (Microsoft)
+   http://msdn.microsoft.com/en-us/library/windows/desktop/aa364404%28v=vs.85%29.aspx
+   
+ - PHP filesystem attack vectors
+   http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
+   
+ - PHP filesystem attack vectors - Take Two
+   http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
+   
+ - Oddities of PHP file access in Windows. Cheat-sheet.
+   http://onsec.ru/onsec.whitepaper-02.eng.pdf   
+   
+ - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
+   http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
+
+*/
+
 $FILENAME = "fs_test1.dat";
 $FILENAME_8_3 = "fs_tes~1.dat";
 $FILENAME_DOT_FIRST = ".fs_test2.dat";
@@ -114,6 +138,26 @@ function test_append_string($FILENAME, $append) {
 	print("Testing " . $append . " at the end of filename:\n");
 
 	$f = $FILENAME . $append;
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		print("    yes\n");
+	} else {
+		print("    no\n");
+	}
+	
+	print("\n");
+}
+
+function test_prepend_string($FILENAME, $prefix) {
+	global $DEBUG;
+	
+	print("Testing " . $prefix . " at the beginning of filename:\n");
+
+	$f = $prefix . $FILENAME;
 
 	if (isset($DEBUG)) {
 		print("Try: $f\n");
@@ -284,6 +328,11 @@ test_append_string($FILENAME, "/.");
 test_append_string($FILENAME, ".\\");
 test_append_string($FILENAME, "\\.");
 test_append_string($FILENAME, ".....");
+test_append_string($FILENAME, "::\$DATA");
+
+test_prepend_string(getcwd() . "/" . $FILENAME, "\\\\.\\");
+test_prepend_string(getcwd() . "/" . $FILENAME, "//./");
+test_prepend_string(getcwd() . "/" . $FILENAME, "\\\\?\\");
 
 // --------------------
 
