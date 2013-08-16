@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-$FILENAME = "test_fs_evasion.php";
+$FILENAME = "fs_test1.dat";
+$FILENAME_DOT_FIRST = ".fs_test2.dat";
 $RANGE_MIN = 0;
 $RANGE_MAX = 65536;
 //$DEBUG = true;
@@ -14,7 +15,7 @@ function test($f) {
 	if (empty($contents)) {
 		return false;
 	} else {
-		if (strpos($contents, $FILENAME) === false) {
+		if (strpos($contents, "fuzz") === false) {
 			die("Did not actually get file content!");
 		}
 
@@ -116,6 +117,29 @@ print_platform_info();
 if (!test($FILENAME)) {
 	die("Could not open test file: $FILENAME\n");
 }
+
+// First check that we can actually open the test file.
+if (!test($FILENAME_DOT_FIRST)) {
+	die("Could not open test file: $FILENAME_DOT_FIRST\n");
+}
+
+// --------------------
+
+print("Ignores dot at the beginning of file name:\n");
+
+$f = substr($FILENAME_DOT_FIRST, 1);
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("    yes\n");
+} else {
+	print("    no\n");
+}
+
+print("\n");
 
 // --------------------
 
