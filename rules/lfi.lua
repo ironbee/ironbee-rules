@@ -311,6 +311,9 @@ function is_lfi_attack(a)
 		--      is more likely to be a path.
 
 		-- TODO Path detection should be better.
+
+		-- TODO This implementation fails to take into account ignorable UTF-8 characters
+		--      that exist on OS X (need to determine exactly what filesystem is that).
 	end
 
 

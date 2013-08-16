@@ -10,6 +10,9 @@ Attack
 
   - Otherwise, requires sucessful exploitation, usually disclosure of a well-known file
 
+  - Special case on Windows, when inclusion of \\share\some\file.dat is requested, and the
+    share does not exist, there will be a delay of several seconds
+
   - Automated RFI tools ofen attempt to execute code that outputs a known string
   
   - Automated RFI tools often look for known vulnerable applications/scripts before attempting exploitation
