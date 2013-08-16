@@ -1,7 +1,33 @@
 #!/usr/bin/env php
 <?php
 
-$FILENAME = "test_fs_evasion.php";
+/*
+
+Useful references and prior work, in no particular order:
+
+ - Naming Files, Paths, and Namespaces (Microsoft)
+   http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+   
+ - File Streams (Microsoft)
+   http://msdn.microsoft.com/en-us/library/windows/desktop/aa364404%28v=vs.85%29.aspx
+   
+ - PHP filesystem attack vectors
+   http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
+   
+ - PHP filesystem attack vectors - Take Two
+   http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
+   
+ - Oddities of PHP file access in Windows. Cheat-sheet.
+   http://onsec.ru/onsec.whitepaper-02.eng.pdf   
+   
+ - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
+   http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
+
+*/
+
+$FILENAME = "fs_test1.dat";
+$FILENAME_8_3 = "fs_tes~1.dat";
+$FILENAME_DOT_FIRST = ".fs_test2.dat";
 $RANGE_MIN = 0;
 $RANGE_MAX = 65536;
 //$DEBUG = true;
@@ -14,7 +40,7 @@ function test($f) {
 	if (empty($contents)) {
 		return false;
 	} else {
-		if (strpos($contents, $FILENAME) === false) {
+		if (strpos($contents, "fuzz") === false) {
 			die("Did not actually get file content!");
 		}
 
@@ -106,6 +132,46 @@ function pad_filename($FILENAME, $len) {
 	return $f;
 }
 
+function test_append_string($FILENAME, $append) {
+	global $DEBUG;
+	
+	print("Testing " . $append . " at the end of filename:\n");
+
+	$f = $FILENAME . $append;
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		print("    yes\n");
+	} else {
+		print("    no\n");
+	}
+	
+	print("\n");
+}
+
+function test_prepend_string($FILENAME, $prefix) {
+	global $DEBUG;
+	
+	print("Testing " . $prefix . " at the beginning of filename:\n");
+
+	$f = $prefix . $FILENAME;
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		print("    yes\n");
+	} else {
+		print("    no\n");
+	}
+	
+	print("\n");
+}
+
 
 // -- Main ---
 
@@ -117,22 +183,63 @@ if (!test($FILENAME)) {
 	die("Could not open test file: $FILENAME\n");
 }
 
+// First check that we can actually open the test file.
+if (!test($FILENAME_DOT_FIRST)) {
+	die("Could not open test file: $FILENAME_DOT_FIRST\n");
+}
+
 // --------------------
 
-print("Max path length:\n");
+print("Short (DOS/8.3) filename test:\n");
 
-$f = $FILENAME;
+$f = $FILENAME_8_3;
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("    yes\n");
+} else {
+	print("    no\n");
+}
+	
+print("\n");
+
+// --------------------
+
+print("Ignores dot at the beginning of file name:\n");
+
+$f = substr($FILENAME_DOT_FIRST, 1);
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("    yes\n");
+} else {
+	print("    no\n");
+}
+
+print("\n");
+
+// --------------------
+
+print("Max path length (terminating NUL excluded):\n");
+
 $len = 1;
 
 for (;;) {
-	$f = pad_filename($FILENAME, $len);
+	$f = getcwd() . "/" . pad_filename($FILENAME, $len);
 
 	if (isset($DEBUG)) {
 		print("Try: $f\n");
 	}
 
 	if (!test($f)) {
-		print("    " . strlen($f) . "\n");
+		$MY_MAXPATHLEN = strlen($f);
+		print("    " . $MY_MAXPATHLEN . "\n");
 		break;
 	}
 
@@ -143,7 +250,7 @@ print("\n");
 
 // Determine if the characters after maximum length are ignored.
 
-$f = pad_filename($FILENAME, $len - 1);
+$f = getcwd() . "/" . pad_filename($FILENAME, $len - 1);
 if (!test($f)) {
 	die("Unexpected failure.\n");
 }
@@ -155,58 +262,16 @@ if (isset($DEBUG)) {
 }
 
 if (test($f)) {
-	print("Adding content past MAX_PATH works (len " . strlen($f) . ").\n");
+	print("Adding content past MAXPATHLEN works (len " . strlen($f) . ").\n");
 } else {
-	print("Adding content past MAX_PATH does not work (len " . strlen($f) . ").\n");
-}
-
-print("\n");
-
-// Determine . path truncation
-
-$f = pad_filename($FILENAME, $len - 1);
-if (!test($f)) {
-	die("Unexpected failure.\n");
-}
-
-$f = $f . ".";
-
-if (isset($DEBUG)) {
-	print("Try: $f\n");
-}
-
-if (test($f)) {
-	print("Path . truncation works.\n");
-} else {
-	print("Path . truncation does not work.\n");
-}
-
-print("\n");
-
-// Determine .\ path truncation
-
-$f = pad_filename($FILENAME, $len - 2);
-if (!test($f)) {
-	die("Unexpected failure.\n");
-}
-
-$f = $f . ".\\";
-
-if (isset($DEBUG)) {
-	print("Try: $f\n");
-}
-
-if (test($f)) {
-	print("Path .\\ truncation works.\n");
-} else {
-	print("Path .\\ truncation does not work.\n");
+	print("Adding content past MAXPATHLEN does not work (len " . strlen($f) . ").\n");
 }
 
 print("\n");
 
 // --------------------
 
-print("Ignored when appended to a filename:\n");
+print("One character ignored when appended to a filename:\n");
 
 $count = 0;
 
@@ -228,6 +293,46 @@ if ($count == 0) {
 }
 
 print("\n");
+
+// --------------------
+
+print("Two characters ignored when appended to a filename:\n");
+
+$count = 0;
+
+for ($c1 = $RANGE_MIN; $c1 < 256; $c1++) {
+for ($c2 = $RANGE_MIN; $c2 < 256; $c2++) {
+	$f = $FILENAME . utf8($c1) . utf8($c2);
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		print_char($c1, $c2);
+		$count++;
+	}
+}
+}
+
+if ($count == 0) {
+	print("    none\n");
+}
+
+print("\n");
+
+// --------------------
+
+test_append_string($FILENAME, "./");
+test_append_string($FILENAME, "/.");
+test_append_string($FILENAME, ".\\");
+test_append_string($FILENAME, "\\.");
+test_append_string($FILENAME, ".....");
+test_append_string($FILENAME, "::\$DATA");
+
+test_prepend_string(getcwd() . "/" . $FILENAME, "\\\\.\\");
+test_prepend_string(getcwd() . "/" . $FILENAME, "//./");
+test_prepend_string(getcwd() . "/" . $FILENAME, "\\\\?\\");
 
 // --------------------
 
