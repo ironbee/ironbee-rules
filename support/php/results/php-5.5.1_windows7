@@ -1,0 +1,93 @@
+Current PHP version: 5.5.1
+
+Operating system: Windows NT ANTEC 6.1 build 7601 (Windows 7 Business Edition Service Pack 1) i586
+
+PHP_MAXPATHLEN: 260
+
+Extensions: Core (5.5.1) bcmathcalendarctypedate (5.5.1) eregfilter (0.11.0) ftphash (1.0) iconvjson (1.2.1) mcryptSPL (0.2) odbc (1.0) pcreReflection ($Id: b65ccaa26d9194861c2cb2f3f1c8a29fa2f0a788 $) sessionstandard (5.5.1) mysqlnd (mysqlnd 5.0.11-dev - 20120503 - $Id: 40933630edef551dfaca71298a83fad8d03d62d4 $) tokenizer (0.1) zip (1.11.0) zlib (2.0) libxmldom (20031129) PDO (1.0.4dev) Phar (2.0.1) SimpleXML (0.1) wddxxmlxmlreader (0.1) xmlwriter (0.1) mhash
+
+Short (DOS/8.3) filename test:
+    yes
+
+Ignores dot at the beginning of file name:
+    no
+
+Max path length (terminating NUL excluded):
+    259
+
+Adding content past MAXPATHLEN does not work (len 259).
+
+One character ignored when appended to a filename:
+    0x20 ' '
+    0x22 '"'
+    0x2e '.'
+    0x3c '<'
+    0x3e '>'
+
+Two characters ignored when appended to a filename:
+    0x20 ' ', 0x20 ' '
+    0x20 ' ', 0x2e '.'
+    0x22 '"', 0x20 ' '
+    0x22 '"', 0x22 '"'
+    0x22 '"', 0x2e '.'
+    0x22 '"', 0x3c '<'
+    0x22 '"', 0x3e '>'
+    0x2e '.', 0x20 ' '
+    0x2e '.', 0x2e '.'
+    0x3c '<', 0x20 ' '
+    0x3c '<', 0x22 '"'
+    0x3c '<', 0x2e '.'
+    0x3c '<', 0x3c '<'
+    0x3c '<', 0x3e '>'
+    0x3e '>', 0x20 ' '
+    0x3e '>', 0x22 '"'
+    0x3e '>', 0x2e '.'
+    0x3e '>', 0x3c '<'
+    0x3e '>', 0x3e '>'
+
+Testing ./ at the end of filename:
+    no
+
+Testing /. at the end of filename:
+    no
+
+Testing .\ at the end of filename:
+    no
+
+Testing \. at the end of filename:
+    no
+
+Testing ..... at the end of filename:
+    yes
+
+Testing ::$DATA at the end of filename:
+    yes
+
+Testing \\.\ at the beginning of filename:
+    yes
+
+Testing //./ at the beginning of filename:
+    yes
+
+Testing \\?\ at the beginning of filename:
+    no
+
+Ignored when prepended to a filename:
+    0x3c '<'
+
+Ignored inside a filename:
+    0x3c '<'
+
+Filename terminators:
+    none
+
+Single character wildcards:
+    0x3c '<'
+    0x3e '>'
+
+Multi-character wildcards:
+    0x3c '<'
+
+Double-quote works as a dot:
+    yes
+
