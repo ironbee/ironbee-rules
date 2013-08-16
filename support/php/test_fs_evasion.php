@@ -186,51 +186,9 @@ if (test($f)) {
 
 print("\n");
 
-// Determine . path truncation
-
-$f = pad_filename($FILENAME, $len - 1);
-if (!test($f)) {
-	die("Unexpected failure.\n");
-}
-
-$f = $f . ".";
-
-if (isset($DEBUG)) {
-	print("Try: $f\n");
-}
-
-if (test($f)) {
-	print("Path . truncation works.\n");
-} else {
-	print("Path . truncation does not work.\n");
-}
-
-print("\n");
-
-// Determine .\ path truncation
-
-$f = pad_filename($FILENAME, $len - 2);
-if (!test($f)) {
-	die("Unexpected failure.\n");
-}
-
-$f = $f . ".\\";
-
-if (isset($DEBUG)) {
-	print("Try: $f\n");
-}
-
-if (test($f)) {
-	print("Path .\\ truncation works.\n");
-} else {
-	print("Path .\\ truncation does not work.\n");
-}
-
-print("\n");
-
 // --------------------
 
-print("Ignored when appended to a filename:\n");
+print("One character ignored when appended to a filename:\n");
 
 $count = 0;
 
@@ -245,6 +203,33 @@ for ($c = $RANGE_MIN; $c < $RANGE_MAX; $c++) {
 		print_char($c);
 		$count++;
 	}
+}
+
+if ($count == 0) {
+	print("    none\n");
+}
+
+print("\n");
+
+// --------------------
+
+print("Two characters ignored when appended to a filename:\n");
+
+$count = 0;
+
+for ($c1 = $RANGE_MIN; $c1 < 256; $c1++) {
+for ($c2 = $RANGE_MIN; $c2 < 256; $c2++) {
+	$f = $FILENAME . utf8($c1) . utf8($c2);
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		print_char($c1, $c2);
+		$count++;
+	}
+}
 }
 
 if ($count == 0) {
