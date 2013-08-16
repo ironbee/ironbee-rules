@@ -2,6 +2,7 @@
 <?php
 
 $FILENAME = "fs_test1.dat";
+$FILENAME_8_3 = "fs_tes~1.dat";
 $FILENAME_DOT_FIRST = ".fs_test2.dat";
 $RANGE_MIN = 0;
 $RANGE_MAX = 65536;
@@ -142,6 +143,24 @@ if (!test($FILENAME)) {
 if (!test($FILENAME_DOT_FIRST)) {
 	die("Could not open test file: $FILENAME_DOT_FIRST\n");
 }
+
+// --------------------
+
+print("Short (DOS/8.3) filename test:\n");
+
+$f = $FILENAME_8_3;
+
+if (isset($DEBUG)) {
+	print("Try: $f\n");
+}
+
+if (test($f)) {
+	print("    yes\n");
+} else {
+	print("    no\n");
+}
+	
+print("\n");
 
 // --------------------
 
