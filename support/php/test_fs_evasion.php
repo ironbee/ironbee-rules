@@ -143,20 +143,20 @@ print("\n");
 
 // --------------------
 
-print("Max path length:\n");
+print("Max path length (terminating NUL excluded):\n");
 
-$f = $FILENAME;
 $len = 1;
 
 for (;;) {
-	$f = pad_filename($FILENAME, $len);
+	$f = getcwd() . "/" . pad_filename($FILENAME, $len);
 
 	if (isset($DEBUG)) {
 		print("Try: $f\n");
 	}
 
 	if (!test($f)) {
-		print("    " . strlen($f) . "\n");
+		$MY_MAXPATHLEN = strlen($f);
+		print("    " . $MY_MAXPATHLEN . "\n");
 		break;
 	}
 
@@ -167,7 +167,7 @@ print("\n");
 
 // Determine if the characters after maximum length are ignored.
 
-$f = pad_filename($FILENAME, $len - 1);
+$f = getcwd() . "/" . pad_filename($FILENAME, $len - 1);
 if (!test($f)) {
 	die("Unexpected failure.\n");
 }
@@ -179,9 +179,9 @@ if (isset($DEBUG)) {
 }
 
 if (test($f)) {
-	print("Adding content past MAX_PATH works (len " . strlen($f) . ").\n");
+	print("Adding content past MAXPATHLEN works (len " . strlen($f) . ").\n");
 } else {
-	print("Adding content past MAX_PATH does not work (len " . strlen($f) . ").\n");
+	print("Adding content past MAXPATHLEN does not work (len " . strlen($f) . ").\n");
 }
 
 print("\n");
