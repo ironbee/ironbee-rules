@@ -107,6 +107,26 @@ function pad_filename($FILENAME, $len) {
 	return $f;
 }
 
+function test_append_string($FILENAME, $append) {
+	global $DEBUG;
+	
+	print("Testing " . $append . " at the end of filename:\n");
+
+	$f = $FILENAME . $append;
+
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+
+	if (test($f)) {
+		print("    yes\n");
+	} else {
+		print("    no\n");
+	}
+	
+	print("\n");
+}
+
 
 // -- Main ---
 
@@ -237,6 +257,14 @@ if ($count == 0) {
 }
 
 print("\n");
+
+// --------------------
+
+test_append_string($FILENAME, "./");
+test_append_string($FILENAME, "/.");
+test_append_string($FILENAME, ".\\");
+test_append_string($FILENAME, "\\.");
+test_append_string($FILENAME, ".....");
 
 // --------------------
 
