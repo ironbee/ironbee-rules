@@ -5,11 +5,12 @@ c:/some stuff
 /some stuff
 /etc/passwd
 c:\boot.ini
+\\.\c:\boot.ini
 \\?\c:\boot.ini
 \\?\c:./././boot.ini
 \\?\c:./././../../boot.ini
-\\?\UNC\Server\Volume\boot.ini
 \\share\some\file.dat
+\\?\share\some\file.dat
 c:/boot.ini
 c:/././././boot.ini
 c:/../../../boot.ini

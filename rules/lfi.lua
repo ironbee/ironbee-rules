@@ -126,24 +126,20 @@ function normalize_path(p)
 	-- ATTACK POINT Normalization will fail if the target system allows for other
 	--              characters as path segment separators. For example: http://seclists.org/bugtraq/2000/Oct/264
 
-	-- Useful information about Windows paths: http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
-
-	-- If the path starts with "//?/UNC/Server/Share/", remove that part. What
-	-- remains should be an absolute path that starts with /.
-	-- TODO This is dangerous because we remove potentially large parts of the input.
-	local capture = string.match(path, "^/+%?/+unc/.+/.+(/.*)")
+	-- If the path starts with "//?/", remove it.
+	local capture = string.match(path, "^/+%?/+(.+)")
 	if capture then
-	 	path = capture
+		path = capture
 	end
 
-	-- If the path starts with "//?/c:", remove that part.
-	local capture = string.match(path, "^/+%?/+%a:(.+)")
+	-- If the path starts with "//./", remove it.
+	local capture = string.match(path, "^/+%./+(.+)")
 	if capture then
 		path = capture
 	end
 
 	-- If the path starts with "c:", remove that part. On Unix, a filename that begins
-	-- with "c:" is valid, but removing the first two characters shouldn't impact our detection.
+	-- with "c:" is valid, but removing the first two characters hopefully shouldn't impact our detection.
 	local capture = string.match(path, "^%a:(.+)")
 	if capture then
 		path = capture
