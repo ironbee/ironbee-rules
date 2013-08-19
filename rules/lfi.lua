@@ -269,7 +269,8 @@ function is_lfi_attack(a)
 
 		-- ATTACK POINT If PHP's include_path configuration setting is pointing to
 		--              a special place (e.g., /etc/), then the attacker might be
-		--              able to bypass our well-known filename detection.
+		--              able to bypass our well-known filename detection. Same with
+		--              other platforms that may have other interesting points of entry.
 
 		local pattern = "^" .. escape_lua_metachars(v)
 
