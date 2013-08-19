@@ -22,7 +22,15 @@ Useful references and prior work, in no particular order:
    http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
    
  - Oddities of PHP file access in Windows. Cheat-sheet.
-   http://onsec.ru/onsec.whitepaper-02.eng.pdf   
+   http://onsec.ru/onsec.whitepaper-02.eng.pdf
+
+   Comments:
+
+   - The < wildcard appears to be affected by the presence of a dot in the matched
+     filename. For example, "<.txt" will match "123.txt" and so will "<txt", but
+     not "<xt". It's possible that the wildcard stops matching at a dot (inclusive).
+
+     TODO Find out if other characters affects the matching in this way.
    
  - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
    http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
