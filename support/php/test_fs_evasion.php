@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+// TODO Convert all tests to use absolute filenames. Then, add a separate set of
+//      tests that use relative filenames and target the include() facility. This is
+//      because the relative filenames will exercise a different code path.
+
 /*
 
 Useful references and prior work, in no particular order:
@@ -250,6 +254,9 @@ print("\n");
 
 // Determine if the characters after maximum length are ignored.
 
+// TODO Some truncation attacks will not work with absolute paths; they need relative
+//      paths because only then include_path kicks in with its own behaviour.
+
 $f = getcwd() . "/" . pad_filename($FILENAME, $len - 1);
 if (!test($f)) {
 	die("Unexpected failure.\n");
@@ -323,6 +330,8 @@ print("\n");
 
 // --------------------
 
+test_append_string($FILENAME, ".");
+test_append_string($FILENAME, "/");
 test_append_string($FILENAME, "./");
 test_append_string($FILENAME, "/.");
 test_append_string($FILENAME, ".\\");
