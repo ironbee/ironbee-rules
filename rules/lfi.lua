@@ -108,9 +108,16 @@ function decode_path(p)
 	path = url_decode(path)
 
 	-- TODO Handle %u encoding.
+
 	-- TODO Handle overlong UTF-8.
+
 	-- TODO Handle the half-width/full-width range.
-	-- TODO Use best-fit matching as a vulnerable system might.
+
+	-- TODO Use best-fit matching as a vulnerable system might, or possibly simply
+	--      remove all non-ASCII characters.
+
+	-- TODO Remove Unicode characters that are ignored on OS X.
+
 	-- TODO Implement other decoding steps vulnerable applications might do. For
 	--      example, decode HTML entities.
 
@@ -333,9 +340,6 @@ function is_lfi_attack(a)
 		--      is more likely to be a path.
 
 		-- TODO Path detection should be better (smarter).
-
-		-- TODO This implementation fails to take into account ignorable UTF-8 characters
-		--      that exist on OS X (need to determine exactly what filesystem is that).
 	end
 
 
