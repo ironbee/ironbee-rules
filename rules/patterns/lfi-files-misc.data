@@ -4,6 +4,8 @@
 
 # TODO Combine everything into a single list.
 
+# TODO Process http://www.digininja.org/blog/when_all_you_can_do_is_read.php and follow all links.
+
 # Notes:
 #  - Use lowercase.
 #  - Do not use drive letters for Windows paths.
@@ -54,9 +56,15 @@
 \web.config
 \windows\win.ini
 \windows\system32\drivers\etc\hosts
+\inetpub\
 \inetpub\wwwroot\web.config
 \progra~1\
 \progra~2\
+\documents and settings\
+\docume~1\
+\web.config
+\ntuser.ini
+\desktop.ini
 
 # Log files
 /apache/logs/
