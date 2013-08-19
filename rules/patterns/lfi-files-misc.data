@@ -57,18 +57,22 @@
 /var/spool/
 \autoexec.bat
 \boot.ini
-\web.config
-\windows\win.ini
-\windows\system32\drivers\etc\hosts
-\inetpub\
-\inetpub\wwwroot\web.config
-\progra~1\
-\progra~2\
+\desktop.ini
+\desktop"ini
 \documents and settings\
 \docume~1\
-\web.config
+\inetpub\
+\inetpub\wwwroot\web.config
 \ntuser.ini
-\desktop.ini
+\ntuser"ini
+\progra~1\
+\progra~2\
+\web.config
+\web"config
+\windows\
+\windows\win.ini
+\windows\win"ini
+\windows\system32\drivers\etc\hosts
 
 # Log files
 /apache/logs/
