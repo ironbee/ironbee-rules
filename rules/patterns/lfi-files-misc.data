@@ -2,9 +2,13 @@
 # an LFI attack. The format is still evolving; at the moment it is
 # pretty disorganised.
 
-# TODO Combine everything into a single list.
-
-# TODO Process http://www.digininja.org/blog/when_all_you_can_do_is_read.php and follow all links.
+# TODO
+# 
+# - Combine everything into a single list.
+#
+# - Process http://www.digininja.org/blog/when_all_you_can_do_is_read.php and follow all the links.
+#
+# - A comprehensive study of key files is needed.
 
 # Notes:
 #  - Use lowercase.
