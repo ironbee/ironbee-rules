@@ -5,6 +5,8 @@
 //      tests that use relative filenames and target the include() facility. This is
 //      because the relative filenames will exercise a different code path.
 
+// TODO Repeat all Windows tests with "\\?\" prepended, activate the Unicode mode.
+
 /*
 
 Useful references and prior work, in no particular order:
