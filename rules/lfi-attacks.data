@@ -5,6 +5,7 @@ c:/some stuff
 /some stuff
 /etc/passwd
 c:\boot.ini
+c:\boot.i<i
 \\.\c:\boot.ini
 \\?\c:\boot.ini
 \\?\c:./././boot.ini

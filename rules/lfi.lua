@@ -318,7 +318,7 @@ function is_lfi_attack(a)
 	-- The first 128 characters are the same as those typically used in a path?
 	-- Portable Filename Character Set: [-a-zA-Z0-9_.]
 	-- http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap03.html#tag_03_276
-	if (pcre.match(a, "^[-~:/a-zA-Z0-9._ ]{0,128}")) then
+	if (pcre.match(a, "^[-\"<>~:/a-zA-Z0-9._ ]{0,128}")) then
 		-- To minimize false positives, require at least one
 		-- forward slash to decide the input looks like a path.
 		if (string.find(a, "/")) then
@@ -328,13 +328,10 @@ function is_lfi_attack(a)
 		-- TODO Input that begins with a drive letter (e.g., c:), dot, and slash
 		--      is more likely to be a path.
 
-		-- TODO Path detection should be better.
+		-- TODO Path detection should be better (smarter).
 
 		-- TODO This implementation fails to take into account ignorable UTF-8 characters
 		--      that exist on OS X (need to determine exactly what filesystem is that).
-
-		-- TODO This implementation fails to take into account that PHP on Windows accepts
-		--      < and > as wildcard characters, and that a double quote is converted to a dot.
 	end
 
 
