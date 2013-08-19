@@ -55,6 +55,8 @@
 \windows\win.ini
 \windows\system32\drivers\etc\hosts
 \inetpub\wwwroot\web.config
+\progra~1\
+\progra~2\
 
 # Log files
 /apache/logs/
