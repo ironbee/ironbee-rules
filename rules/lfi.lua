@@ -159,6 +159,7 @@ end
 function is_lfi_attack(a)
 	local p = 0
 	local looks_like_a_path = false
+	local contains_wildcards = false
 	local have_full_match = false
 	local have_fragment_match = false
 	local has_nul_byte = false
@@ -319,6 +320,10 @@ function is_lfi_attack(a)
 		-- forward slash to decide the input looks like a path.
 		if (string.find(a, "/")) then
 			looks_like_a_path = true
+		
+			if (string.find(a, "[<>]")) then
+				contains_wildcards = true
+			end
 		end
 
 		-- TODO Input that begins with a drive letter (e.g., c:), dot, and slash
@@ -380,6 +385,7 @@ function is_lfi_attack(a)
 		print("    Upload temporary file attack: " .. tostring(upload_tmp_attack))
 		print("    Path fluff length: " .. path_fluff_len)
 		print("    Multiple dots length: " .. multiple_dots_len)
+		print("    Contains wildcards: " .. tostring(contains_wildcards))
 	end
 
 	-- Decision time.
@@ -391,6 +397,13 @@ function is_lfi_attack(a)
 			p = 0.2
 
 			if have_fragment_match then
+				p = 0.5
+			end
+
+			-- TODO Need better handling of wildcards. Perhaps try to match one
+			--      of the known Windows files?
+
+			if contains_wildcards then
 				p = 0.5
 			end
 		end
