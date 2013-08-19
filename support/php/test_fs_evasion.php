@@ -33,6 +33,9 @@ Useful references and prior work, in no particular order:
  - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
    http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
 
+ - Windows File Pseudonyms
+   http://download.coresecurity.com/corporate/attachments/Windows%20File%20Pseudonyms%20Dan%20Crowley%20Shmoocom%202010.pdf
+
  Comments:
 
    - The < wildcard appears to be affected by the presence of a dot in the matched
