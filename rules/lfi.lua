@@ -3,7 +3,7 @@
 require "luarocks.loader"
 local pcre = require "rex_pcre"
 
-local debug = false
+local debug = true
 
 function max(v1, v2)
 	if v1 > v2 then
@@ -24,6 +24,14 @@ function count_matches(haystack, needle)
 	end
 
 	return count
+end
+
+function count_matches_len(haystack, needle)
+	local len = 0
+    for w in string.gmatch(haystack, "(" .. needle .. ")") do
+      len = len + #w
+    end
+	return len
 end
 
 function file_lines(f) 
@@ -145,15 +153,23 @@ function normalize_path(p)
 		path = capture
 	end
 
-	-- TODO Multiple consecutive path segment separators as an indication of evasion?
-
-	-- Finally, compress consecutive forward slashes.
-	path = string.gsub(path, "/+", "/")
-
 	return path
 end
 
 function is_lfi_attack(a)
+	local p = 0
+	local looks_like_a_path = false
+	local have_full_match = false
+	local have_fragment_match = false
+	local has_nul_byte = false
+	local upload_tmp_attack = false
+	local seen_php_wrapper = false
+	local path_fluff_len = 0
+	local consecutive_slashes = 0
+	local self_references = 0
+	local back_references = 0
+	local multiple_dots_len = 0
+
 	if debug then
 		print("\nInput: " .. a)
 	end
@@ -172,34 +188,40 @@ function is_lfi_attack(a)
 		print("After normalization: " .. a)
 	end
 
-	-- Count ./ and ../ fragments before we remove them.
+	-- Count ./ fragments before we remove them.
 
 	local self_references = count_matches(a, "/%./")
 	if string.match(a, "^%./") then
 		self_references = self_references + 1
 	end
 
+	-- Count ../ fragments before we remove them.
+
 	local back_references = count_matches(a, "/%.%./")
 	if string.match(a, "^%.%./") then
 		back_references = back_references + 1
 	end
 
+	-- Count consecutive slashes before we reduce them.
+	consecutive_slashes = count_matches_len(a, "//+")
+
+	-- Count the lenght of groups of 3 dots and more.
+	multiple_dots_len = count_matches_len(a, "%.%.%.+")
+
+
+	local path_fluff_len = #a
+
+	-- Remove ./ and ../ dot segments.
 	a = remove_dot_segments(a)
 
+	-- Compress consecutive forward slashes.
+	a = string.gsub(a, "/+", "/")
+
 	if debug then
-		print("After dot segments: " .. a)
+		print("After dot segment removal: " .. a)
 	end
-	
-	--print("Normalized: " .. a)
 
-
-	local p = 0
-	local looks_like_a_path = false
-	local have_full_match = false
-	local have_fragment_match = false
-	local has_nul_byte = false
-	local upload_tmp_attack = false
-	local seen_php_wrapper = false
+	path_fluff_len = path_fluff_len - #a
 
 
 	-- PHP wrappers (http://php.net/manual/en/wrappers.data.php)
@@ -365,13 +387,17 @@ function is_lfi_attack(a)
 	end
 
 	if debug then
-		print("Have full match: " .. tostring(have_full_match))
-		print("Have fragment match: " .. tostring(have_fragment_match))
-		print("Looks like a path: " .. tostring(looks_like_a_path))
-		print("Has NUL byte: " .. tostring(has_nul_byte))
-		print("Self-references: " .. self_references)
-		print("Back-references: " .. back_references)
-		print("Upload temporary file attack: " .. tostring(upload_tmp_attack))
+		print("")
+		print("    Have full match: " .. tostring(have_full_match))
+		print("    Have fragment match: " .. tostring(have_fragment_match))
+		print("    Looks like a path: " .. tostring(looks_like_a_path))
+		print("    Has NUL byte: " .. tostring(has_nul_byte))
+		print("    Self-references: " .. self_references)
+		print("    Back-references: " .. back_references)
+		print("    Consecutive slashes: " .. consecutive_slashes)
+		print("    Upload temporary file attack: " .. tostring(upload_tmp_attack))
+		print("    Path fluff length: " .. path_fluff_len)
+		print("    Multiple dots length: " .. multiple_dots_len)
 	end
 
 	-- Decision time.
@@ -396,6 +422,11 @@ function is_lfi_attack(a)
 		p = max(p, 1)
 	end
 
+	-- TODO In order to simplify the calculation and make it more predictable,
+	--      replace the calculation below with a single capped single evasion score.
+	--      With the current system we risk counting the same sequence(s) more than
+	--      once.
+
 	if has_nul_byte then
 		p = p + 0.1
 	end
@@ -404,8 +435,20 @@ function is_lfi_attack(a)
 		p = p + 0.1
 	end
 
+	if self_references > 1 then
+		p = p + 0.3
+	end
+
 	if back_references > 0 then
 		p = p + 0.1
+	end
+
+	if consecutive_slashes > 2 then
+		p = p + 0.1
+	end
+
+	if path_fluff_len > 10 then
+		p = p + 0.5
 	end
 
 	return p
@@ -415,6 +458,10 @@ local attacks = file_lines("lfi-attacks.data")
 
 for i, v in ipairs(attacks) do
 	print(i, v, is_lfi_attack(v))
+
+	if debug then
+		print("--")
+	end
 end
 
 -- print(is_lfi_attack("c:/windows/temp/php123%00garbage"))

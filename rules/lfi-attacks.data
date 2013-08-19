@@ -46,3 +46,10 @@ c:/windows/temp/php>>>>
 c:/windows/temp/php>>>>.tmp
 /tmp/php67DedX
 /tmp/php67DedX%00garbage
+/attempt/at/path/truncation/......................................
+/attempt/at/path/truncation///////////////////////////////////////
+/attempt/at/path/truncation/./././././././././././././././././././
+../../../../../../../../../many/back-references.txt
+././././././././././././././many/se-lf-references.txt
+..//////////////////////////////////many/slashes.txt
+..//.//.//.//many/slashes.txt
