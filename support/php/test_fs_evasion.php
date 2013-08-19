@@ -30,7 +30,7 @@ Useful references and prior work, in no particular order:
      filename. For example, "<.txt" will match "123.txt" and so will "<txt", but
      not "<xt". It's possible that the wildcard stops matching at a dot (inclusive).
 
-     TODO Find out if other characters affects the matching in this way.
+   - The > wildcard will not match a dot.     
    
  - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
    http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
@@ -503,6 +503,88 @@ if (test($f)) {
 	print("    yes\n");
 } else {
 	print("    no\n");
+}
+
+print("\n");
+
+// --------------------
+
+print("Test which characters stop the \"<\" wildcard (Windows):\n");
+
+$count = 0;
+
+// We cannot test NUL because it's used as a terminator.
+for ($c = 1; $c < 256; $c++) {
+	// A failure occurs when a colon is used in a file name,
+	// and so we can't test that case either.
+	if ($c == 0x3a) continue;
+	
+	$prefix = "prefix_" . dechex($c) . "_";
+	$f = $prefix . chr($c) . "suffix";
+	
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+	
+	if (@file_put_contents($f, "fuzz") !== false) {	
+		// There's a number of file names that are refused,
+		// so we test only when a file has been created as
+		// we requested it.
+		if (!file_exists($prefix)) {					
+			// We want to match the character that's being
+			// tested and the character that follows ("s").
+			if (!test($prefix . "<uffix")) {				
+				print_char($c);
+				$count++;
+			}
+		}
+	}	
+	
+	@unlink($f);
+}
+
+if ($count == 0) {
+	print("    none\n");
+}
+
+print("\n");
+
+print("Test which characters are not matched by the \">\" wildcard (Windows):\n");
+
+$count = 0;
+
+// We cannot test NUL because it's used as a terminator.
+for ($c = 1; $c < 256; $c++) {
+	// A failure occurs when a colon is used in a file name,
+	// and so we can't test that case either.
+	if ($c == 0x3a) continue;
+	
+	$prefix = "prefix_" . dechex($c) . "_";
+	$f = $prefix . chr($c) . "_suffix";
+	
+	if (isset($DEBUG)) {
+		print("Try: $f\n");
+	}
+	
+	if (@file_put_contents($f, "fuzz") !== false) {	
+		// There's a number of file names that are refused,
+		// so we test only when a file has been created as
+		// we requested it.
+		if (!file_exists($prefix)) {					
+			// We want to match the character that's being
+			// tested and the character that follows ("s").
+			if (!test($prefix . ">_suffix")) {				
+				print_char($c);
+				$count++;
+			}
+		}
+	}	
+	
+	@unlink($f);
+}
+
+if ($count == 0) {
+	print("    none\n");
 }
 
 print("\n");
