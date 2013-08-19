@@ -256,10 +256,6 @@ function is_lfi_attack(a)
 	--              10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
 	--              platform or filesystem supported it.
 
-	-- ATTACK POINT TODO On Windows systems it might be possible to use short names and
-	--              other Windows-specific techniques (e.g., Alternative Data Streams) to
-	--              bypass detection: http://code.google.com/p/iis-shortname-scanner-poc/
-
 	local filenames = file_lines("lfi-files.data")
 
 	for i, v in ipairs(filenames) do
@@ -286,7 +282,7 @@ function is_lfi_attack(a)
 			-- Try again, first prepending a forward slash to the input string. We want to
 			-- be extra vigilent and match patterns such as "etc/passwd" (our list will
 			-- contain it as /etc/passwd).
-			-- TODO Change the implementation to avoid having to match twice.
+
 			if (string.find("/" .. a, pattern)) then
 				have_full_match = true
 
@@ -351,19 +347,8 @@ function is_lfi_attack(a)
 	end
 
 
-	-- TODO PHP path truncation attacks:
-	--		http://www.ush.it/2009/02/08/php-filesystem-attack-vectors/
-	--		http://www.ush.it/2009/07/26/php-filesystem-attack-vectors-take-two/
+	-- PHP LFI to arbitrary code execution via rfc1867 file upload temporary files
 
-
-	-- TODO PHP MAX_PATH truncation attack.
-	--      Another alternative for NULL byte
-	--      http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
-
-
-	-- PHP LFI to arbitratry code execution via rfc1867 file upload temporary files
-	--     http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf
-	
 	if looks_like_a_path then
 		-- Examples:
 		--   c:/windows/temp/php<<
@@ -460,5 +445,3 @@ for i, v in ipairs(attacks) do
 		print("--")
 	end
 end
-
--- print(is_lfi_attack("c:/windows/temp/php123%00garbage"))

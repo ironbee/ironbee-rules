@@ -24,16 +24,22 @@ Useful references and prior work, in no particular order:
  - Oddities of PHP file access in Windows. Cheat-sheet.
    http://onsec.ru/onsec.whitepaper-02.eng.pdf
 
-   Comments:
+ - Another alternative for NULL byte
+   http://blog.ptsecurity.com/2010/08/another-alternative-for-null-byte.html
+
+ - PHP LFI to arbitrary code execution via rfc1867 file upload temporary files
+   http://gynvael.coldwind.pl/download.php?f=PHP_LFI_rfc1867_temporary_files.pdf     
+   
+ - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
+   http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
+
+ Comments:
 
    - The < wildcard appears to be affected by the presence of a dot in the matched
      filename. For example, "<.txt" will match "123.txt" and so will "<txt", but
      not "<xt". It's possible that the wildcard stops matching at a dot (inclusive).
 
-   - The > wildcard will not match a dot.     
-   
- - Microsoft IIS tilde character "~" Vulnerability/Feature - Short File/Folder Name Disclosure
-   http://soroush.secproject.com/downloadable/microsoft_iis_tilde_character_vulnerability_feature.pdf
+   - The > wildcard will not match a dot.
 
 */
 
