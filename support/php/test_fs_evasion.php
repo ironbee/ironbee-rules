@@ -329,6 +329,7 @@ test_append_string($FILENAME, ".\\");
 test_append_string($FILENAME, "\\.");
 test_append_string($FILENAME, ".....");
 test_append_string($FILENAME, "::\$DATA");
+test_append_string($FILENAME, ":\$");
 
 test_prepend_string(getcwd() . "/" . $FILENAME, "\\\\.\\");
 test_prepend_string(getcwd() . "/" . $FILENAME, "//./");
