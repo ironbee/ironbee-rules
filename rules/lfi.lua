@@ -140,8 +140,8 @@ function normalize_path(p)
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
 
-	-- ATTACK POINT Normalization will fail if the target system allows for other
-	--              characters as path segment separators. For example: http://seclists.org/bugtraq/2000/Oct/264
+	-- ATTACK POINT Normalization done here will fail if the target system allows for other characters
+	--              as path segment separators. An old example: http://seclists.org/bugtraq/2000/Oct/264
 
 	-- If the path starts with "//?/", remove it.
 	local capture = string.match(path, "^/+%?/+(.+)")
