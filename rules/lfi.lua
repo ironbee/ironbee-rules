@@ -133,7 +133,9 @@ end
 function normalize_path(p)
 	local path = p
 
-	-- ATTACK POINT For this type of attack, we assume the attacker is not able to change.
+	-- ATTACK POINT For this type of attack, we assume the attacker is not able to change the
+	--              shell IFS (Internal Field Separator). This is unlikely for LFI, as these
+	--              attacks are not carried out via a shell.
 
 	-- First, convert all backslashes to forward slashes.
 	path = string.gsub(path, "\\", "/")
