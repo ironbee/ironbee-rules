@@ -317,6 +317,14 @@ function is_lfi_attack(a)
 			-- Look for the fragment anywhere in the input string.
 			if (string.find(a, pattern)) then
 				have_fragment_match = true
+			else
+				-- Try again, first prepending a forward slash to the input string. We want to
+				-- be extra vigilent and match patterns such as "etc/passwd" (our list will
+				-- contain it as /etc/passwd).
+
+				if (string.find("/" .. a, pattern)) then
+					have_fragment_match = true
+				end
 			end
 		end
 	end
