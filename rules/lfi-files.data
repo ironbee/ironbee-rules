@@ -1,6 +1,5 @@
 
 
-
 /.htaccess
 /.htpasswd
 /[jboss]/server/default/conf/jboss-minimal.xml
@@ -961,6 +960,7 @@
 /windows/setupact.log
 /windows/setupapi.log
 /windows/setuperr.log
+/windows/win.ini
 /windows/system32/drivers/etc/hosts
 /windows/system32/drivers/etc/lmhosts.sam
 /windows/system32/drivers/etc/networks
