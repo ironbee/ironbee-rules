@@ -202,6 +202,7 @@
 /wamp/
 /wampp/
 /web/
+/web-inf/
 /webalizer/
 /webbackup/
 /webmin/
@@ -683,7 +684,9 @@ vsftpd.conf
 vsftpd.log
 wampserver.conf
 web.config
+web.xml
 webalizer.conf
+win.ini
 windowsupdate.log
 wine.sysctl.conf
 wired-settings.conf
