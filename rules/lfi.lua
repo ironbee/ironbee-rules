@@ -171,7 +171,7 @@ function is_lfi_attack(a)
 	local contains_wildcards = false
 	local have_full_match = false
 	local have_fragment_match = false
-	local has_nul_byte = false
+	local has_terminator = false
 	local upload_tmp_attack = false
 	local seen_php_wrapper = false
 	local path_fluff_len = 0
@@ -298,8 +298,8 @@ function is_lfi_attack(a)
 				have_full_match = true
 
 				if debug then
-				print("Matched: " .. pattern)
-			end
+					print("Matched: " .. pattern)
+				end
 			end
 		end
 	end
@@ -317,6 +317,7 @@ function is_lfi_attack(a)
 			-- Look for the fragment anywhere in the input string.
 			if (string.find(a, pattern)) then
 				have_fragment_match = true
+				
 			else
 				-- Try again, first prepending a forward slash to the input string. We want to
 				-- be extra vigilent and match patterns such as "etc/passwd" (our list will
@@ -341,6 +342,8 @@ function is_lfi_attack(a)
 		if (string.find(a, "/")) then
 			looks_like_a_path = true
 		
+			-- wildcards work only on windows
+			-- wildcards does not work in JSP/Tomcat
 			if (string.find(a, "[<>]")) then
 				contains_wildcards = true
 			end
@@ -362,10 +365,14 @@ function is_lfi_attack(a)
 	--     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-7243
 	--     https://bugs.php.net/bug.php?id=39863
 
-	-- NUL bytes should probably not be allowed, but we'll leave other rules
+	-- In JSP, the character ; or ? terminates a path within 
+	-- <jsp:include page="<%= file %>" /> and
+	-- <c:import url="<%= file %>" />
+	
+	-- Terminators should probably not be allowed, but we'll leave other rules
 	-- to take care of that. We'll only detect.
-	if (string.find(a, string.char(0))) then
-		has_nul_byte = true
+	if (string.find(a, string.char(0)) or string.find(a, ';') or string.find(a, '?')) then
+		has_terminator = true
 	end
 
 
@@ -395,7 +402,7 @@ function is_lfi_attack(a)
 		print("    Have full match: " .. tostring(have_full_match))
 		print("    Have fragment match: " .. tostring(have_fragment_match))
 		print("    Looks like a path: " .. tostring(looks_like_a_path))
-		print("    Has NUL byte: " .. tostring(has_nul_byte))
+		print("    Has terminator: " .. tostring(has_terminator))
 		print("    Self-references: " .. self_references)
 		print("    Back-references: " .. back_references)
 		print("    Consecutive slashes: " .. consecutive_slashes)
@@ -439,7 +446,7 @@ function is_lfi_attack(a)
 	--      With the current system we risk counting the same sequence(s) more than
 	--      once.
 
-	if has_nul_byte then
+	if has_terminator then
 		p = p + 0.1
 	end
 
