@@ -657,6 +657,7 @@ timezone
 tinyproxy.conf
 tmp
 tomcat.options
+tomcat-users.xml
 tor-tsocks.conf
 tpvmlp.conf
 tsocks.conf
