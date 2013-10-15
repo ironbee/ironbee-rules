@@ -242,7 +242,7 @@ function is_lfi_attack(a)
 	-- added for JSP: jar:, jndi:, url:
 	-- url: can be used for filter evasion, for example: url:file:C:\Windows\win.ini
 
-	if pcre.match(a, "^(file|php|zlib|data|glob|phar|ssh2|rar|ogg|expect|jar|jndi|url):") then
+	if pcre.match(a, "^(file|php|zlib|bzip2|zip|compress.zlib|compress.bzip2|data|glob|phar|ssh2|rar|ogg|expect|jar|jndi|url):") then
 		-- NOTE We do not detect http, https, and ftp schemes as wrappers. We focus
 		--      on LFI here, and those fall under RFI.
 		seen_wrapper = true
