@@ -173,7 +173,7 @@ function is_lfi_attack(a)
 	local have_fragment_match = false
 	local has_terminator = false
 	local upload_tmp_attack = false
-	local seen_php_wrapper = false
+	local seen_wrapper = false
 	local path_fluff_len = 0
 	local consecutive_slashes = 0
 	local self_references = 0
@@ -238,11 +238,14 @@ function is_lfi_attack(a)
 	--
 	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
 	-- the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
+	
+	-- added for JSP: jar:, jndi:, url:
+	-- url: can be used for filter evasion, for example: url:file:///
 
-	if pcre.match(a, "^(file|php|zlib|data|glob|phar|ssh2|rar|ogg|expect):") then
+	if pcre.match(a, "^(file|php|zlib|data|glob|phar|ssh2|rar|ogg|expect|jar|jndi|url):") then
 		-- NOTE We do not detect http, https, and ftp schemes as wrappers. We focus
 		--      on LFI here, and those fall under RFI.
-		seen_php_wrapper = true
+		seen_wrapper = true
 	end
 
 
@@ -410,6 +413,7 @@ function is_lfi_attack(a)
 		print("    Path fluff length: " .. path_fluff_len)
 		print("    Multiple dots length: " .. multiple_dots_len)
 		print("    Contains wildcards: " .. tostring(contains_wildcards))
+		print("    Contains wrapper: " .. tostring(seen_wrapper))
 	end
 
 	-- Decision time.
@@ -437,7 +441,7 @@ function is_lfi_attack(a)
 		end
 	end
 
-	if seen_php_wrapper then
+	if seen_wrapper then
 		p = max(p, 1)
 	end
 
