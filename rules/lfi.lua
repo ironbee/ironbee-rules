@@ -238,6 +238,7 @@ function is_lfi_attack(a)
 	--
 	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
 	-- the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
+	-- beware: after normalization php://input becomes php:/input
 	
 	-- added for JSP: jar:, jndi:, url:
 	-- url: can be used for filter evasion, for example: url:file:///
