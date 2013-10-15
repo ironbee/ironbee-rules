@@ -57,6 +57,16 @@ function url_decode(s)
     return s
 end
 
+function html_decode(s)
+	-- replace &amp; first because it is part of other entities
+	s = string.gsub(s, "&amp;", "&")
+	s = string.gsub(s, "&quot;", "\"")
+    s = string.gsub(s, "&#039;", "'")
+	s = string.gsub(s, "&gt;", ">")
+	s = string.gsub(s, "&lt;", "<")
+    return s
+end
+
 function escape_lua_metachars(s)
 	return(s:gsub("[-().%%+*?[%]^$]", function (chr) return "%" .. chr end))
 end
@@ -121,6 +131,8 @@ function decode_path(p)
 	-- TODO Implement other decoding steps vulnerable applications might do. For
 	--      example, decode HTML entities.
 
+	path = html_decode(path)
+	
 	-- Strictly speaking, we don't have to trim here because PHP does not ignore
 	-- whitespace at the beginning of file names. However, we do because many
 	-- applications could be doing the trimming themselves and I suspect the chances
@@ -160,6 +172,12 @@ function normalize_path(p)
 	local capture = string.match(path, "^%a:(.+)")
 	if capture then
 		path = capture
+		
+		-- save drive letter detection
+		-- windows drive only valid with slash C:/ or backslash C:\
+		if(string.sub(capture, 0, 1) == '/' or string.sub(capture, 0, 1) == '\\') then
+			has_drive_letter = true
+		end
 	end
 
 	return path
@@ -169,6 +187,7 @@ function is_lfi_attack(a)
 	local p = 0
 	local looks_like_a_path = false
 	local contains_wildcards = false
+	has_drive_letter = false
 	local have_full_match = false
 	local have_fragment_match = false
 	local has_terminator = false
@@ -238,7 +257,6 @@ function is_lfi_attack(a)
 	--
 	-- Most wrappers require the presence of the "://" sequence after the scheme name, but
 	-- the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
-	-- beware: after normalization php://input becomes php:/input
 	
 	-- added for JSP: jar:, jndi:, url:
 	-- url: can be used for filter evasion, for example: url:file:///
@@ -354,14 +372,16 @@ function is_lfi_attack(a)
 			looks_like_a_path = true
 		
 			-- wildcards work only on windows
-			-- wildcards does not work in JSP/Tomcat
-			if (string.find(a, "[<>]")) then
+			-- wildcards does not work in JSP/Tomcat nor ASP.NET
+			
+			-- TODO make regex match only for one wildcarded directory/file
+			-- 		because wildcards work only on one spot of the path
+						
+			if (pcre.match(a, "(^|/)[^/<>]*(>+|<+)[^/<>]*(/|$)")) then
 				contains_wildcards = true
 			end
+			
 		end
-
-		-- TODO Input that begins with a drive letter (e.g., c:), dot, and slash
-		--      is more likely to be a path.
 
 		-- TODO Path detection should be better (smarter).
 	end
@@ -413,6 +433,7 @@ function is_lfi_attack(a)
 		print("    Have full match: " .. tostring(have_full_match))
 		print("    Have fragment match: " .. tostring(have_fragment_match))
 		print("    Looks like a path: " .. tostring(looks_like_a_path))
+		print("    Has drive letter: " .. tostring(has_drive_letter))
 		print("    Has terminator: " .. tostring(has_terminator))
 		print("    Self-references: " .. self_references)
 		print("    Back-references: " .. back_references)
@@ -436,11 +457,12 @@ function is_lfi_attack(a)
 				p = 0.5
 			end
 
-			-- TODO Need better handling of wildcards. Perhaps try to match one
-			--      of the known Windows files?
-
 			if contains_wildcards then
 				p = 0.5
+			end
+			
+			if has_drive_letter then
+				p = p + 0.3
 			end
 		end
 
