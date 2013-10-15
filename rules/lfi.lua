@@ -240,15 +240,22 @@ function is_lfi_attack(a)
 	-- the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
 	
 	-- added for JSP: jar:, jndi:, url:
-	-- url: can be used for filter evasion, for example: url:file:C:\Windows\win.ini
+	-- url: can be used for filter evasion, for example: url:file:///
 
-	if pcre.match(a, "^(file|php|zlib|bzip2|zip|compress.zlib|compress.bzip2|data|glob|phar|ssh2|rar|ogg|expect|jar|jndi|url):") then
-		-- NOTE We do not detect http, https, and ftp schemes as wrappers. We focus
-		--      on LFI here, and those fall under RFI.
-		seen_wrapper = true
+	-- NOTE We do not detect http, https, and ftp schemes as wrappers. We focus
+	--      on LFI here, and those fall under RFI.
+		
+	local wrappers = file_lines("rfi-wrapper.data")
+	
+	for i, v in ipairs(wrappers) do
+		local pattern = "^" .. escape_lua_metachars(v) .. ":"
+
+		if string.find(a, pattern) then
+			seen_wrapper = true
+		end
 	end
-
-
+	
+		
 	-- Detect attempts to include PHP session files (e.g., /tmp/sess_SESSIONID). To
 	-- do this, we have common session storage locations on the known files list. The
 	-- paths are usually /tmp/, /var/lib/php5/ (Debian, Ubuntu), and /var/lib/php/session
