@@ -240,7 +240,7 @@ function is_lfi_attack(a)
 	-- the "data:" wrapper does not (RFC 2397, http://tools.ietf.org/html/rfc2397).
 	
 	-- added for JSP: jar:, jndi:, url:
-	-- url: can be used for filter evasion, for example: url:file:///
+	-- url: can be used for filter evasion, for example: url:file:C:\Windows\win.ini
 
 	if pcre.match(a, "^(file|php|zlib|data|glob|phar|ssh2|rar|ogg|expect|jar|jndi|url):") then
 		-- NOTE We do not detect http, https, and ftp schemes as wrappers. We focus
