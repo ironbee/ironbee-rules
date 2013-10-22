@@ -49,6 +49,8 @@ function file_lines(f)
 	return a
 end
 
+
+
 function url_decode(s)
 	s = string.gsub(s, "+", " ")
     s = string.gsub(s, "%%(%x%x)", function (h)
@@ -58,12 +60,24 @@ function url_decode(s)
 end
 
 function html_decode(s)
-	-- replace &amp; first because it is part of other entities
+	-- none or multiple prefixed 0 are allowed in entity numbers
+	-- note that everything is already lowercased
+	
+	s = string.gsub(s, "&#x0*(%x%x);", function (h)
+			return string.char(tonumber(h, 16))
+		end)
+		
+	s = string.gsub(s, "&#0*(%x%x);", function (h)
+			return string.char(tonumber(h, 10))
+		end)
+			
 	s = string.gsub(s, "&amp;", "&")
+	s = string.gsub(s, "&nbsp;", " ")
 	s = string.gsub(s, "&quot;", "\"")
-    s = string.gsub(s, "&#039;", "'")
-	s = string.gsub(s, "&gt;", ">")
+	s = string.gsub(s, "&apos;", "'")
 	s = string.gsub(s, "&lt;", "<")
+	s = string.gsub(s, "&gt;", ">")
+		
     return s
 end
 
@@ -106,6 +120,7 @@ end
 function trim(s)
   return s:gsub("^%s*(.-)%s*$", "%1")
 end
+
 
 function decode_path(p)
 	local path = p
@@ -186,7 +201,7 @@ end
 function is_lfi_attack(a)
 	local p = 0
 	local looks_like_a_path = false
-	local contains_wildcards = false
+	local contains_wildcard = false
 	has_drive_letter = false
 	local have_full_match = false
 	local have_fragment_match = false
@@ -376,9 +391,9 @@ function is_lfi_attack(a)
 			
 			-- TODO make regex match only for one wildcarded directory/file
 			-- 		because wildcards work only on one spot of the path
-						
+			
 			if (pcre.match(a, "(^|/)[^/<>]*(>+|<+)[^/<>]*(/|$)")) then
-				contains_wildcards = true
+				contains_wildcard = true
 			end
 			
 		end
@@ -441,7 +456,7 @@ function is_lfi_attack(a)
 		print("    Upload temporary file attack: " .. tostring(upload_tmp_attack))
 		print("    Path fluff length: " .. path_fluff_len)
 		print("    Multiple dots length: " .. multiple_dots_len)
-		print("    Contains wildcards: " .. tostring(contains_wildcards))
+		print("    Contains wildcard: " .. tostring(contains_wildcard))
 		print("    Contains wrapper: " .. tostring(seen_wrapper))
 	end
 
@@ -457,7 +472,7 @@ function is_lfi_attack(a)
 				p = 0.5
 			end
 
-			if contains_wildcards then
+			if contains_wildcard then
 				p = 0.5
 			end
 			
