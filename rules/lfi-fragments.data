@@ -694,6 +694,7 @@ wired-settings.conf
 wireless-settings.conf
 wmsetup.log
 workers.properties
+wp-config.php
 wtmp
 wtmpx
 x0msgs
