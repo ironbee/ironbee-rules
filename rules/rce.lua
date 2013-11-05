@@ -91,7 +91,7 @@ function normalize_cmd(c)
 		cmd = string.gsub(cmd, "%$%(([^%)]*)%)", ";%1;")
 		has_execute_operator = true
 	end
-	
+		
 	-- attack:
 	-- the dollar $ is still present and can confuse the filter
 	-- ${'(id)'} is transformed to $id
@@ -105,7 +105,15 @@ function normalize_cmd(c)
 	cmd = string.gsub(cmd, "\$ifs", " ")
 	cmd = string.gsub(cmd, "%s+", " ")
 	
-	cmd = string.gsub(cmd, "`+", ";")
+	if string.find(cmd, "`") then
+		cmd = string.gsub(cmd, "`+", ";")
+		has_execute_operator = true
+	end
+	
+	-- attack:
+	-- (i`foo`d) will execute "id" but filter sees i;foo;d
+	-- thats why we add a score for execution operator detection
+	
 	cmd = string.gsub(cmd, "|+", ";")
 	cmd = string.gsub(cmd, "&+", ";")
 	cmd = string.gsub(cmd, ">+", ";")
