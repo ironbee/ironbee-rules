@@ -36,27 +36,6 @@ function url_decode(s)
     return s
 end
 
-function html_decode(s)
-	-- none or multiple prefixed 0 are allowed in entity numbers
-	-- note that everything is already lowercased
-	
-	s = string.gsub(s, "&#x0*(%x%x);", function (h)
-			return string.char(tonumber(h, 16))
-		end)
-		
-	s = string.gsub(s, "&#0*(%x%x);", function (h)
-			return string.char(tonumber(h, 10))
-		end)
-			
-	s = string.gsub(s, "&amp;", "&")
-	s = string.gsub(s, "&nbsp;", " ")
-	s = string.gsub(s, "&quot;", "\"")
-	s = string.gsub(s, "&apos;", "'")
-	s = string.gsub(s, "&lt;", "<")
-	s = string.gsub(s, "&gt;", ">")
-		
-    return s
-end
 
 function escape_lua_metachars(s)
 	return(s:gsub("[-().%%+*?[%]^$]", function (chr) return "%" .. chr end))
@@ -88,10 +67,8 @@ function decode_cmd(c)
 
 	-- TODO Remove Unicode characters that are ignored on OS X.
 
-	-- TODO Implement other decoding steps vulnerable applications might do. For
-	--      example, decode HTML entities.
-
-	cmd = html_decode(cmd)
+	-- ATTACK: do not decode HTML entities
+	-- the characters & and ; can be abused to confuse the filter
 	
 	cmd = trim(cmd)
 
