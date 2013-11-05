@@ -263,6 +263,7 @@ asppp.log
 audit_log
 auth.log
 authlog
+autoexec.bat
 autoindex.conf
 avahi-daemon.conf
 bash.bashrc
