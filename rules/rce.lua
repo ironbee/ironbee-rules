@@ -222,11 +222,12 @@ function is_rce_attack(a)
 
 	-- Decision time.
 
-	if has_execute_operator then
-		p = 0.5
-	end
 	if has_escape_characters then
-		p = p + 0.2
+		if has_execute_operator then
+			p = 0.5
+		else
+			p = 0.2
+		end
 		if has_variables then
 			p = p + 0.3
 		end
