@@ -87,7 +87,10 @@ function normalize_cmd(c)
 	cmd = string.gsub(cmd, "\"", "")
 	cmd = string.gsub(cmd, "*", "")
 	
-	cmd = string.gsub(cmd, "%$%(([^%)]*)%)", ";%1;")
+	if string.find(cmd, "%$%(([^%)]*)%)") then
+		cmd = string.gsub(cmd, "%$%(([^%)]*)%)", ";%1;")
+		has_execute_operator = true
+	end
 	
 	-- attack:
 	-- the dollar $ is still present and can confuse the filter
@@ -120,6 +123,7 @@ function is_rce_attack(a)
 	local has_escape_characters = false
 	local has_variables = false
 	local has_known_command = false
+	has_execute_operator = false;
 
 	if debug then
 		print("\nInput: " .. a)
@@ -201,6 +205,7 @@ function is_rce_attack(a)
 	if debug then
 		print("")
 		print("    Has escape char: " .. tostring(has_escape_characters))
+		print("    Has execute operator: " .. tostring(has_execute_operator))
 		print("    Has variable: " .. tostring(has_variables))
 		print("    Has known command: " .. tostring(has_known_command))
 		print("    Has arguments: " .. tostring(has_arguments))
@@ -209,8 +214,11 @@ function is_rce_attack(a)
 
 	-- Decision time.
 
+	if has_execute_operator then
+		p = 0.5
+	end
 	if has_escape_characters then
-		p = 0.2
+		p = p + 0.2
 		if has_variables then
 			p = p + 0.3
 		end
