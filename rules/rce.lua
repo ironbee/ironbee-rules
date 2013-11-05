@@ -89,6 +89,10 @@ function normalize_cmd(c)
 	
 	cmd = string.gsub(cmd, "%$%(([^%)]*)%)", ";%1;")
 	
+	-- attack:
+	-- the dollar $ is still present and can confuse the filter
+	-- ${'(id)'} is transformed to $id
+	
 	cmd = string.gsub(cmd, "%(", "")
 	cmd = string.gsub(cmd, "%)", "")
 	cmd = string.gsub(cmd, "{", "")
