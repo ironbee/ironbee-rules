@@ -94,7 +94,7 @@ function normalize_cmd(c)
 	cmd = string.gsub(cmd, "{", "")
 	cmd = string.gsub(cmd, "}", "")
 	
-	cmd = string.gsub(cmd, "\n+", ";")
+	cmd = string.gsub(cmd, string.char(10), ";")
 	cmd = string.gsub(cmd, "\$ifs", " ")
 	cmd = string.gsub(cmd, "%s+", " ")
 	
