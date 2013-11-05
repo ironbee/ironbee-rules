@@ -185,6 +185,10 @@ function is_rce_attack(a)
 
 	-- Look for well-known commands
 
+	-- TODO attack:
+	-- ./bin/bash
+	-- normalize paths
+
 	if has_escape_characters == true then
 		local commands = file_lines("rce-commands.data")
 		
