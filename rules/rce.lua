@@ -78,6 +78,7 @@ end
 function normalize_cmd(c)
 	local cmd = c
 
+	-- remove characters ignored by bash or cmd
 	cmd = string.gsub(cmd, "^", "")
 	cmd = string.gsub(cmd, "\\", "")
 	cmd = string.gsub(cmd, ",", "")
@@ -87,6 +88,7 @@ function normalize_cmd(c)
 	cmd = string.gsub(cmd, "\"", "")
 	cmd = string.gsub(cmd, "*", "")
 	
+	-- detect $() operator
 	if string.find(cmd, "%$%(([^%)]*)%)") then
 		cmd = string.gsub(cmd, "%$%(([^%)]*)%)", ";%1;")
 		has_execute_operator = true
@@ -101,10 +103,19 @@ function normalize_cmd(c)
 	cmd = string.gsub(cmd, "{", "")
 	cmd = string.gsub(cmd, "}", "")
 	
+	-- newline introduces new command
 	cmd = string.gsub(cmd, string.char(10), ";")
-	cmd = string.gsub(cmd, "\$ifs", " ")
+	
+	-- replace "internal field separator" variable
+	if string.find(cmd, "\$ifs") then
+		cmd = string.gsub(cmd, "\$ifs", " ")
+		has_variables = true
+	end
+	
+	-- replace several whitespaces to a single whitespace
 	cmd = string.gsub(cmd, "%s+", " ")
 	
+	-- detect the backtick operator
 	if string.find(cmd, "`") then
 		cmd = string.gsub(cmd, "`+", ";")
 		has_execute_operator = true
@@ -114,13 +125,20 @@ function normalize_cmd(c)
 	-- (i`foo`d) will execute "id" but filter sees i;foo;d
 	-- thats why we add a score for execution operator detection
 	
+	-- detect piping >& often used by remote shells
+	-- http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
+	if string.find(cmd, "[<>]+%s*%&") then
+		has_pipe = true
+	end
+	
+	-- replace command separators with semicolon
 	cmd = string.gsub(cmd, "|+", ";")
 	cmd = string.gsub(cmd, "&+", ";")
+		
 	cmd = string.gsub(cmd, ">+", ";")
 	cmd = string.gsub(cmd, "<+", ";")
 	
 	cmd = string.gsub(cmd, "%s*;+%s*", ";")
-	
 	
 	return cmd
 end
@@ -129,9 +147,10 @@ function is_rce_attack(a)
 	local p = 0
 	local has_arguments = false
 	local has_escape_characters = false
-	local has_variables = false
+	has_variables = false
 	local has_known_command = false
-	has_execute_operator = false;
+	has_execute_operator = false
+	has_pipe = false
 
 	if debug then
 		print("\nInput: " .. a)
@@ -157,44 +176,43 @@ function is_rce_attack(a)
 		has_escape_characters = true
 	end
 	
-	-- detect windows environment variables
-	-- http://ss64.com/nt/syntax-variables.html
 	
-	local variables = file_lines("rce-var-win.data")
-	
-	for i, v in ipairs(variables) do
-		local pattern = "%%" .. escape_lua_metachars(v) .. "%%"
-
-		if string.find(a, pattern) then
-			has_variables = true
-		end
-	end
-	
-	-- detect linux environment variables
-
-	local variables = file_lines("rce-var-linux.data")
-
-	for i, v in ipairs(variables) do
-		local pattern = "%$" .. escape_lua_metachars(v)
-
-		if string.find(a, pattern) then
-			has_variables = true
-		end
-	end
-
-
-	-- Look for well-known commands
-
-	-- TODO attack:
-	-- ./bin/bash
-	-- normalize paths
-
 	if has_escape_characters == true then
-		local commands = file_lines("rce-commands.data")
+	
+		-- detect windows environment variables
+		-- http://ss64.com/nt/syntax-variables.html
 		
+		local variables = file_lines("rce-var-win.data")
+		
+		for i, v in ipairs(variables) do
+			local pattern = "%%" .. escape_lua_metachars(v) .. "%%"
+
+			if string.find(a, pattern) then
+				has_variables = true
+			end
+		end
+	
+		-- detect linux environment variables
+
+		local variables = file_lines("rce-var-linux.data")
+
+		for i, v in ipairs(variables) do
+			local pattern = "%$" .. escape_lua_metachars(v)
+
+			if string.find(a, pattern) then
+				has_variables = true
+			end
+		end
+
+
+		-- detect well-known commands
+
+		local commands = file_lines("rce-commands.data")
+		local command_found = false
 		for i, v in ipairs(commands) do
 			local pattern = "^" .. escape_lua_metachars(v)
 
+			-- detect command at beginning of new command sequence
 			for c in string.gmatch(a, "([^;]+)") do
 				if string.find(c, pattern) then
 					has_known_command = true
@@ -207,10 +225,25 @@ function is_rce_attack(a)
 				end
 			end
 			
-			if has_arguments then
+			-- detect command somewhere in injection
+			if string.find(a, escape_lua_metachars(v)) then
+				command_found = true
+			end
+			
+			if has_known_command and has_arguments then
 				break
 			end
 		end
+		
+		-- if command was not found at beginning of command sequence but was found somewhere in injection
+		-- look for well-known binary locations to avoid bypass /bin/nc or %windir%/system32/cmd /c calc
+		
+		if not has_known_command and command_found then
+			if pcre.match(a, "(windows|system32|bin|usr)") then
+				has_known_command = true
+			end
+		end
+		
 	end
 
 
@@ -221,6 +254,7 @@ function is_rce_attack(a)
 		print("    Has variable: " .. tostring(has_variables))
 		print("    Has known command: " .. tostring(has_known_command))
 		print("    Has arguments: " .. tostring(has_arguments))
+		print("    Has pipe: " .. tostring(has_pipe))
 	end
 	
 
@@ -234,6 +268,9 @@ function is_rce_attack(a)
 		end
 		if has_variables then
 			p = p + 0.3
+		end
+		if has_pipe then
+			p = p + 0.2
 		end
 		if has_known_command then
 			p = p + 0.5
