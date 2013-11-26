@@ -396,6 +396,11 @@ function is_lfi_attack(a)
 				contains_wildcard = true
 			end
 			
+			-- detect windows short 8.3 names
+			if (string.find(a, '~')) then
+				contains_wildcard = true
+			end
+			
 		end
 
 		-- TODO Path detection should be better (smarter).
