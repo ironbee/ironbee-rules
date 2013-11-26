@@ -1,5 +1,3 @@
-
-
 /.htaccess
 /.htpasswd
 /[jboss]/server/default/conf/jboss-minimal.xml
