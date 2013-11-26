@@ -310,6 +310,8 @@ function is_lfi_attack(a)
 	--              10.6.8 or Ubuntu 12.04 LTS, but I wouldn't be surprised if some
 	--              platform or filesystem supported it.
 
+	-- TODO: add common window 8.3 short names to file
+
 	local filenames = file_lines("lfi-files.data")
 
 	for i, v in ipairs(filenames) do
@@ -351,6 +353,8 @@ function is_lfi_attack(a)
 
 	-- Look for well-known path fragments; this is a weaker indication of attack,
 	-- but may catch those attacks that avoid referencing well-known files.
+
+	-- TODO: add common window 8.3 short names to file
 
 	if have_full_match == false then
 		local patterns = file_lines("lfi-fragments.data")
