@@ -20,3 +20,6 @@ expect
 jar
 jndi
 url
+netdoc
+gopher
+mailto
